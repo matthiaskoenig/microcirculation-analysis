@@ -3,6 +3,19 @@
 https://trac.ffmpeg.org/wiki/How%20to%20speed%20up%20/%20slow%20down%20a%20video
 
 ## video stabilization
+
+curated list of methods:
+https://github.com/yaochih/awesome-video-stabilization
+
+optical flow
+https://www.youtube.com/watch?v=5AUypv5BNbI
+https://www.youtube.com/watch?v=4v_keMNROv4
+
+https://www.codespeedy.com/optical-flow-in-opencv-python/
+https://www.geeksforgeeks.org/python-opencv-dense-optical-flow/
+
+https://github.com/pathak22/pyflow
+
 Simple video stabilization using OpenCV
 http://nghiaho.com/?p=2093
 
