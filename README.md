@@ -1,35 +1,23 @@
+# Microcirculation analysis
+Analysis of microcirculation videos from OPS and IDF devices.
+
+## IO and conversion
+### OPS 
+OPS videos in the old format can be read via the CapiMetrics software and exported as AVI.
+
+
+## Video processing with python
+
+OpenCV python
+https://github.com/opencv/opencv-python
+pip install opencv-python
+
+
 ## change video framerate
 
 https://trac.ffmpeg.org/wiki/How%20to%20speed%20up%20/%20slow%20down%20a%20video
 
-## video stabilization
 
-curated list of methods:
-https://github.com/yaochih/awesome-video-stabilization
-
-optical flow
-https://www.youtube.com/watch?v=5AUypv5BNbI
-https://www.youtube.com/watch?v=4v_keMNROv4
-
-https://www.codespeedy.com/optical-flow-in-opencv-python/
-https://www.geeksforgeeks.org/python-opencv-dense-optical-flow/
-
-https://github.com/pathak22/pyflow
-
-Simple video stabilization using OpenCV
-http://nghiaho.com/?p=2093
-
-
-1. Find the transformation from previous to current frame using optical flow for all frames. The transformation only consists of three parameters: dx, dy, da (angle). Basically, a rigid Euclidean transform, no scaling, no sharing.
-2. Accumulate the transformations to get the “trajectory” for x, y, angle, at each frame.
-3. Smooth out the trajectory using a sliding average window. The user defines the window radius, where the radius is the number of frames used for smoothing.
-4. Create a new transformation such that new_transformation = transformation + (smoothed_trajectory – trajectory).
-5. Apply the new transformation to the video.
-
-
-
-https://adamspannbauer.github.io/python_video_stab
-pip install vidstab[cv2]
 
 
 # python video processing

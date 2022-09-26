@@ -1,1 +1,5 @@
-matplotlib
+numpy
+matplotlib==3.5.0
+opencv-python
+opencv-contrib-python
+vidstab
