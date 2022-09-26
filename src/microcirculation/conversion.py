@@ -1,9 +1,15 @@
 from pathlib import Path
+from typing import Tuple
+
 import numpy as np
 import cv2 as cv
 
 
-def ops_conversion(input_path: Path, output_path: Path):
+def ops_conversion(
+        input_path: Path, output_path: Path,
+        fps_out: float, frame_size: Tuple[int, int],
+        show: bool = True,
+):
     """Read OPS AVI and convert to correct avi."""
 
     cap = cv.VideoCapture(str(input_path))
@@ -16,8 +22,8 @@ def ops_conversion(input_path: Path, output_path: Path):
     out = cv.VideoWriter(
         filename=str(output_path),
         fourcc=fourcc,
-        fps=30.0,
-        frameSize=(640, 480),
+        fps=fps_out,
+        frameSize=frame_size,
     )
 
     while cap.isOpened():
@@ -30,13 +36,12 @@ def ops_conversion(input_path: Path, output_path: Path):
         # TODO: process frames
         out.write(frame)
 
-        # save results
-
         # Display results
-        gray = cv.cvtColor(frame, cv.COLOR_BGR2GRAY)
-        cv.imshow('frame', gray)
-        if cv.waitKey(1) == ord('q'):
-            break
+        if show:
+            gray = cv.cvtColor(frame, cv.COLOR_BGR2GRAY)
+            cv.imshow('frame', gray)
+            if cv.waitKey(1) == ord('q'):
+                break
     cap.release()
     out.release()
     cv.destroyAllWindows()
@@ -44,7 +49,38 @@ def ops_conversion(input_path: Path, output_path: Path):
 
 if __name__ == "__main__":
     from microcirculation import data_path
-    input_path: Path = data_path / "FMR_015-TP1-1.avi"
-    output_path: Path = data_path / "output.avi"
-    print(input_path)
-    ops_conversion(input_path=input_path, output_path=output_path)
+    # input_path: Path = data_path / "ops" / "FMR_015-TP1-1.avi"
+    # output_path: Path = data_path / "ops" / "output.avi"
+    # ops_conversion(
+    #     input_path=input_path,
+    #     output_path=output_path,
+    #     fps_out=30.0,
+    #     frame_size=(640, 480),
+    # )
+
+    # convert ops videos
+    input_dir: Path = data_path / "ops"
+    for video_in in sorted(input_dir.glob('*.avi')):
+        if not "converted" in str(video_in):
+            print(video_in)
+            video_out = video_in.parent / f"{video_in.stem}_converted.avi"
+            ops_conversion(
+                input_path=video_in,
+                output_path=video_out,
+                fps_out=30.0,
+                frame_size=(640, 480),
+                show=False,
+            )
+
+
+    # input_path: Path = data_path / "braedius" / "BRM-TC-Jena-P3-AdHoc-3-20220901-113654379---V0.avi"
+    # output_path: Path = data_path / "braedius" / "output.avi"
+
+    # print(input_path)
+    # ops_conversion(
+    #     input_path=input_path,
+    #     output_path=output_path,
+    #     fps_out=30.0,
+    #     frame_size=(1772, 1328),
+    # )
+
