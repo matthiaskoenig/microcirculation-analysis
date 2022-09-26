@@ -25,6 +25,7 @@ def ops_conversion(
         fps=fps_out,
         frameSize=frame_size,
     )
+    from matplotlib import pyplot as plt
 
     while cap.isOpened():
         ret, frame = cap.read()
@@ -32,6 +33,21 @@ def ops_conversion(
         if not ret:
             print("Can't receive frame (stream end?). Exiting ...")
             break
+
+        # print(type(frame))
+        # print(frame.shape)
+        #
+        # # convert to gray scale
+        # image = cv.cvtColor(frame, cv.COLOR_BGR2GRAY)
+        # plt.subplot(121)
+        # plt.imshow(image[:, :], cmap="gray", aspect="equal")
+        # plt.axis('off')
+        #
+        # plt.subplot(122)
+        # hist, bins = np.histogram(image[:, :], bins=256)  # , 256, [0,256])
+        # bin_width = bins[1] - bins[0]
+        # plt.bar(bins[:-1], hist * bin_width, bin_width, color="black")
+        # plt.show()
 
         # TODO: process frames
         out.write(frame)
@@ -49,28 +65,29 @@ def ops_conversion(
 
 if __name__ == "__main__":
     from microcirculation import data_path
-    # input_path: Path = data_path / "ops" / "FMR_015-TP1-1.avi"
-    # output_path: Path = data_path / "ops" / "output.avi"
-    # ops_conversion(
-    #     input_path=input_path,
-    #     output_path=output_path,
-    #     fps_out=30.0,
-    #     frame_size=(640, 480),
-    # )
+    input_path: Path = data_path / "ops" / "FMR_015-TP1-2.avi"
+    output_path: Path = data_path / "ops" / "FMR_015-TP1-2_converted.avi"
+    ops_conversion(
+        input_path=input_path,
+        output_path=output_path,
+        fps_out=30.0,
+        frame_size=(640, 480),
+        show=True
+    )
 
     # convert ops videos
-    input_dir: Path = data_path / "ops"
-    for video_in in sorted(input_dir.glob('*.avi')):
-        if not "converted" in str(video_in):
-            print(video_in)
-            video_out = video_in.parent / f"{video_in.stem}_converted.avi"
-            ops_conversion(
-                input_path=video_in,
-                output_path=video_out,
-                fps_out=30.0,
-                frame_size=(640, 480),
-                show=False,
-            )
+    # input_dir: Path = data_path / "ops"
+    # for video_in in sorted(input_dir.glob('*.avi')):
+    #     if not "converted" in str(video_in):
+    #         print(video_in)
+    #         video_out = video_in.parent / f"{video_in.stem}_converted.avi"
+    #         ops_conversion(
+    #             input_path=video_in,
+    #             output_path=video_out,
+    #             fps_out=30.0,
+    #             frame_size=(640, 480),
+    #             show=False,
+    #         )
 
 
     # input_path: Path = data_path / "braedius" / "BRM-TC-Jena-P3-AdHoc-3-20220901-113654379---V0.avi"
