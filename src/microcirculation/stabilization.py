@@ -68,8 +68,11 @@ if __name__ == "__main__":
     #         video_stable = video_in.parent / f"{video_in.stem.replace('_converted')}_stable.avi"
     #         stabilize_video(video_in=video_in, video_out=video_stable)
 
-    video_in: Path = data_path / "ops" / "FMR_015-TP1-2_converted.avi"
-    video_stable: Path = data_path / "ops" / "FMR_015-TP1-2_stable2.avi"
+    # video_in: Path = data_path / "test" / "FMR_015-TP1-2_converted.avi"
+    # video_stable: Path = data_path / "test" / "FMR_015-TP1-2_stable.avi"
+    # video_in: Path = data_path / "test" / "BRM-TC-Jena-P0-AdHoc-1-20220901-092449047---V2.avi"
+    # video_stable: Path = data_path / "test" / "BRM-TC-Jena-P0-AdHoc-1-20220901-092449047---V2_stable.avi"
+
     stabilize_video(video_in=video_in, video_out=video_stable)
     # video_in: Path = data_path / "braedius" / "output.avi"
     # video_stable: Path = data_path / "braedius" / "output_stable.avi"
