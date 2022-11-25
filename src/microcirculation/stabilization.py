@@ -40,10 +40,11 @@ def stabilize_video(video_in: Path, video_out: Path):
 
     # 1. stabilize the heart rate (window of ~ 1second)
     fps: float = 30.0
+    smoothing_window: int = 2
     stabilizer.stabilize(
         input_path=str(video_in),
         output_path=str(video_out),
-        smoothing_window=2,  # int(fps),  # FIXME: this must be adjusted
+        smoothing_window=smoothing_window,  # FIXME: this must be adjusted
         output_fourcc="FFV1",
         show_progress=True,
         playback=False,

@@ -18,7 +18,12 @@ pip install opencv-python
 https://trac.ffmpeg.org/wiki/How%20to%20speed%20up%20/%20slow%20down%20a%20video
 
 
-
+# Stacking videos
+Bonus: create a comparison video
+Use the vstack or hstack filter, depending on if you want them stacked vertically or side-by-side:
+ffmpeg -i clip.mkv -i clip-stabilized.mkv  -filter_complex vstack clips-stacked.mkv
+ffmpeg -i FMR_015-TP3-2_converted.avi -i FMR_015-TP3-2_converted_stable.avi -filter_complex vstack -crf 20 FMR_015_TP3-2_stacked.avi
+https://stackoverflow.com/questions/11552565/vertically-or-horizontally-stack-mosaic-several-videos-using-ffmpeg
 
 # python video processing
 https://abhitronix.github.io/vidgear/latest/gears/stabilizer/usage/
