@@ -1,3 +1,6 @@
 .idea
 data
 __pycache__
+src/microcirculation/composite_videos
+src/.DS_Store
+.DS_Store
