@@ -36,3 +36,12 @@ https://github.com/alex04072000/FuSta
 
 Existing video stabilization methods often generate visible distortion or require aggressive cropping of frame boundaries, resulting in smaller field of views. In this work, we present a frame synthesis algorithm to achieve full-frame video stabilization. We first estimate dense warp fields from neighboring frames and then synthesize the stabilized frame by fusing the warped contents. Our core technical novelty lies in the learning-based hybrid-space fusion that alleviates artifacts caused by optical flow inaccuracy and fast-moving objects. We validate the effectiveness of our method on the NUS, selfie, and DeepStab video datasets. Extensive experiment results demonstrate the merits of our approach over prior video stabilization methods.
 http://jiyang.fun/docs/jiyang_cvpr20.pdf
+
+# Vessel detection
+Frangi, A. F., Niessen, W. J., Vincken, K. L., & Viergever, M. A. (1998). Multiscale vessel enhancement filtering. In Medical Image Computing and Computer-Assisted Intervention — MICCAI’98 (pp. 130–137). Springer Berlin Heidelberg. doi:10.1007/bfb0056195
+
+https://link.springer.com/chapter/10.1007/BFb0056195 
+https://uk.mathworks.com/matlabcentral/fileexchange/24409-hessian-based-frangi-vesselness-filter
+https://imagej.net/plugins/frangi 
+https://www.youtube.com/watch?v=GMFwBLfq7FU (Frangi tutorial)
+Python code: https://github.com/solivr/frangi_filter 
