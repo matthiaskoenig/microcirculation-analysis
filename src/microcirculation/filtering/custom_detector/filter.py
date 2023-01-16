@@ -98,6 +98,7 @@ def stack_images(images: List[Image.Image]) -> None:
     stacked_image.save('final.png')
     stacked_image.show("final")
 
+
 def keypoint_detection(frame: Image, kp_method: str):
     frame = np.array(frame)
     return get_keypoints_for_frame(frame, kp_method)
@@ -113,11 +114,13 @@ def custom1():
 
     stack_images([image_original, image_edges])
 
+
 def custom2():
     image_original = Image.open(test_image_path).convert("L")
     image = threshold(image_original, 160)
     #image = erode(image)
     stack_images([image_original, image])
+
 
 def custom3():
     image_original = Image.open(test_image_path).convert("L")
@@ -130,12 +133,14 @@ def custom3():
 
     stack_images([image_original, Image.fromarray(image1)])
 
+
 def custom4():
     image_original = Image.open(test_image_path).convert("L")
     blur = gaussian(image_original)
     image = Image.fromarray(np.array(image_original) - np.array(blur))
     image = erode(image)
     stack_images([image_original, image])
+
 
 def custom5():
     image_original = Image.open(test_image_path).convert("L")
@@ -149,4 +154,7 @@ def custom5():
 
     stack_images([image_original, kp_frame])
 
-custom5()
+
+if __name__ == "__main__":
+    # input_image = ...
+    custom5()

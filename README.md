@@ -1,6 +1,17 @@
 # Microcirculation analysis
 Analysis of microcirculation videos from OPS and IDF devices.
 
+
+## Installation
+Make virtualenv with python 3.9
+```
+mkvirtualenv microcirculation --python=python3.9
+pip install -r requirements.txt
+pip install napari[all]
+```
+
+
+
 ## IO and conversion
 ### OPS 
 OPS videos in the old format can be read via the CapiMetrics software and exported as AVI.
