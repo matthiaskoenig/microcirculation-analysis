@@ -52,11 +52,15 @@ def stabilize_video(video_in: Path, video_out: Path):
 
     fig1, (ax1, ax2) = stabilizer.plot_trajectory()
 
-    fig1.savefig(video_in.parent / f"{video_out.stem}_trajectory.png", bbox_inches="tight")
+    fig1.savefig(
+        video_in.parent / f"{video_out.stem}_trajectory.png", bbox_inches="tight"
+    )
     plt.show()
 
     fig2, (ax3, ax4) = stabilizer.plot_transforms()
-    fig2.savefig(video_in.parent / f"{video_out.stem}_transforms.png", bbox_inches="tight")
+    fig2.savefig(
+        video_in.parent / f"{video_out.stem}_transforms.png", bbox_inches="tight"
+    )
     plt.show()
 
 

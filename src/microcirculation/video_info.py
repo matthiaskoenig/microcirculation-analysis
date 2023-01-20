@@ -39,11 +39,13 @@ def get_video_info(video_path: Path):
         "frame_height": frame_height,
         "frame_width": frame_width,
         "pixel_width": pixel_width,
-        "pixel_height": pixel_height
+        "pixel_height": pixel_height,
     }
 
 
-def get_composite_video(video_1_path: Path, video_2_path: Path, alignment: str = "horizontal"):
+def get_composite_video(
+    video_1_path: Path, video_2_path: Path, alignment: str = "horizontal"
+):
     """
     2.
     Create composite video: unstabilized/stabilized;
@@ -63,15 +65,45 @@ def get_composite_video(video_1_path: Path, video_2_path: Path, alignment: str =
     if "composite_videos" not in os.listdir("./"):
         os.mkdir("./composite_videos")
 
-    composite_file_name = alignment + "_" + str(video_1_path).replace("/", "_") + "_" + str(video_2_path).replace("/", "_")
+    composite_file_name = (
+        alignment
+        + "_"
+        + str(video_1_path).replace("/", "_")
+        + "_"
+        + str(video_2_path).replace("/", "_")
+    )
     composite_file_path = composite_videos_path / composite_file_name
 
     if alignment == "horizontal":
         assert video_1_info["frame_height"] == video_2_info["frame_height"]
-        subprocess.call(["ffmpeg", "-y", "-i", str(video_1_path), "-i", str(video_2_path), "-filter_complex", "hstack=inputs=2", str(composite_file_path)])
+        subprocess.call(
+            [
+                "ffmpeg",
+                "-y",
+                "-i",
+                str(video_1_path),
+                "-i",
+                str(video_2_path),
+                "-filter_complex",
+                "hstack=inputs=2",
+                str(composite_file_path),
+            ]
+        )
     else:
         assert video_1_info["frame_width"] == video_2_info["frame_width"]
-        subprocess.call(["ffmpeg", "-y", "-i", str(video_1_path), "-i", str(video_2_path), "-filter_complex", "vstack=inputs=2", str(composite_file_path)])
+        subprocess.call(
+            [
+                "ffmpeg",
+                "-y",
+                "-i",
+                str(video_1_path),
+                "-i",
+                str(video_2_path),
+                "-filter_complex",
+                "vstack=inputs=2",
+                str(composite_file_path),
+            ]
+        )
 
     video_file = cv2.VideoCapture(str(composite_file_path))
     while video_file.isOpened():
@@ -79,7 +111,7 @@ def get_composite_video(video_1_path: Path, video_2_path: Path, alignment: str =
         if ret:
             cv2.imshow(composite_file_name, frame)
             cv2.setWindowProperty(composite_file_name, cv2.WND_PROP_TOPMOST, 1)
-            if cv2.waitKey(25) & 0xFF == ord('q'):
+            if cv2.waitKey(25) & 0xFF == ord("q"):
                 break
         else:
             break
@@ -97,7 +129,7 @@ def get_keypoints_for_frame(frame, kp_method: str):
         threshold_fraction: float = 0.01
 
         keypoints_frame = np.array(copy.copy(gray_frame))
-        keypoints_frame[harris_kp > threshold_fraction*harris_kp.max()] = [255, 0, 0]
+        keypoints_frame[harris_kp > threshold_fraction * harris_kp.max()] = [255, 0, 0]
         return keypoints_frame
 
     elif kp_method == "GFTT":
@@ -115,33 +147,38 @@ def get_keypoints_for_frame(frame, kp_method: str):
         frame_kp = cv2.drawKeypoints(gray_frame, fast_kp, None, flags=0)
 
         return frame_kp
-    
+
     elif kp_method == "ORB":
         orb = cv2.ORB_create(200, 2.0)
         keypoints, descriptor = orb.detectAndCompute(gray_frame, None)
 
         keypoints_frame = copy.copy(gray_frame)
-        cv2.drawKeypoints(gray_frame, keypoints, keypoints_frame, flags = cv2.DRAW_MATCHES_FLAGS_DRAW_RICH_KEYPOINTS)
+        cv2.drawKeypoints(
+            gray_frame,
+            keypoints,
+            keypoints_frame,
+            flags=cv2.DRAW_MATCHES_FLAGS_DRAW_RICH_KEYPOINTS,
+        )
 
-        print("Number of keypoints = "+str(len(keypoints)))
+        print("Number of keypoints = " + str(len(keypoints)))
         return keypoints_frame
 
     elif kp_method == "SURF":
         surf = cv2.xfeatures2d.SURF_create(50000)
         keypoints, descriptor = surf.detectAndCompute(gray_frame, None)
 
-        keypoints_frame = cv2.drawKeypoints(gray_frame, keypoints, None, (255,0,0), 4)
-        print("Number of keypoints = "+str(len(keypoints)))
+        keypoints_frame = cv2.drawKeypoints(gray_frame, keypoints, None, (255, 0, 0), 4)
+        print("Number of keypoints = " + str(len(keypoints)))
 
         return keypoints_frame
 
     elif kp_method == "SIFT":
         sift = cv2.SIFT_create()
-        keypoints = sift.detect(gray_frame,None)
+        keypoints = sift.detect(gray_frame, None)
         keypoints_frame = cv2.drawKeypoints(gray_frame, keypoints, gray_frame)
-        #keypoints_frame = cv2.drawKeypoints(gray_frame, keypoints, gray_frame, flags = cv2.DRAW_MATCHES_FLAGS_DRAW_RICH_KEYPOINTS)
-        
-        print("Number of keypoints = "+str(len(keypoints)))
+        # keypoints_frame = cv2.drawKeypoints(gray_frame, keypoints, gray_frame, flags = cv2.DRAW_MATCHES_FLAGS_DRAW_RICH_KEYPOINTS)
+
+        print("Number of keypoints = " + str(len(keypoints)))
         return keypoints_frame
 
 
@@ -159,7 +196,12 @@ def get_keypoints_and_dislay(video_path: Path, kp_method: str):
 
     extension = str(video_path).split(".")[-1]
     outfile_path = "".join(str(video_path).split(".")[:-1]) + "_keypoints." + extension
-    video_out = cv2.VideoWriter(outfile_path, cv2.VideoWriter_fourcc('M', 'J', 'P', 'G'), frame_rate, (int(video_in.get(3)), int(video_in.get(4))))
+    video_out = cv2.VideoWriter(
+        outfile_path,
+        cv2.VideoWriter_fourcc("M", "J", "P", "G"),
+        frame_rate,
+        (int(video_in.get(3)), int(video_in.get(4))),
+    )
 
     kp_frames = []
     while True:
@@ -169,7 +211,7 @@ def get_keypoints_and_dislay(video_path: Path, kp_method: str):
             keypoint_frame = get_keypoints_for_frame(frame, kp_method)
             kp_frames.append(keypoint_frame)
 
-            if cv2.waitKey(25) & 0xFF == ord('q'):
+            if cv2.waitKey(25) & 0xFF == ord("q"):
                 break
         else:
             break
@@ -183,12 +225,12 @@ def get_keypoints_and_dislay(video_path: Path, kp_method: str):
     return outfile_path
 
 
-#video_path = Path("/Users/maniklaldas/Desktop/BRM-TC-Jena-P0-AdHoc-1-20220901-092449047---V0.avi")
+# video_path = Path("/Users/maniklaldas/Desktop/BRM-TC-Jena-P0-AdHoc-1-20220901-092449047---V0.avi")
 video_path = Path("/Users/maniklaldas/Desktop/FMR_015-TP1-1_converted.avi")
 
 keypoint_video_path = Path(get_keypoints_and_dislay(video_path, "SIFT"))
 
-#get_composite_video(video_path, keypoint_video_path, "horizontal")
+# get_composite_video(video_path, keypoint_video_path, "horizontal")
 
 
 """

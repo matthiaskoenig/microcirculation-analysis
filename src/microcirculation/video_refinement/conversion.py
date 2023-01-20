@@ -6,9 +6,11 @@ import cv2 as cv
 
 
 def ops_conversion(
-        input_path: Path, output_path: Path,
-        fps_out: float, frame_size: Tuple[int, int],
-        show: bool = True,
+    input_path: Path,
+    output_path: Path,
+    fps_out: float,
+    frame_size: Tuple[int, int],
+    show: bool = True,
 ):
     """Read OPS AVI and convert to correct avi."""
 
@@ -18,7 +20,7 @@ def ops_conversion(
     # fourcc = cv.VideoWriter_fourcc(*'XVID')
     # Most codecs are lossy. If you want lossless video file you need to use a
     # lossless codecs (eg. FFMPEG FFV1, Huffman HFYU, Lagarith LAGS, etc...)
-    fourcc = cv.VideoWriter_fourcc(*'FFV1')  # lossless
+    fourcc = cv.VideoWriter_fourcc(*"FFV1")  # lossless
     out = cv.VideoWriter(
         filename=str(output_path),
         fourcc=fourcc,
@@ -55,8 +57,8 @@ def ops_conversion(
         # Display results
         if show:
             gray = cv.cvtColor(frame, cv.COLOR_BGR2GRAY)
-            cv.imshow('frame', gray)
-            if cv.waitKey(1) == ord('q'):
+            cv.imshow("frame", gray)
+            if cv.waitKey(1) == ord("q"):
                 break
     cap.release()
     out.release()
@@ -65,6 +67,7 @@ def ops_conversion(
 
 if __name__ == "__main__":
     from microcirculation import data_path
+
     input_path: Path = data_path / "ops" / "FMR_015-TP1-2.avi"
     output_path: Path = data_path / "ops" / "FMR_015-TP1-2_converted.avi"
     ops_conversion(
@@ -72,7 +75,7 @@ if __name__ == "__main__":
         output_path=output_path,
         fps_out=30.0,
         frame_size=(640, 480),
-        show=True
+        show=True,
     )
 
     # convert ops videos
@@ -89,7 +92,6 @@ if __name__ == "__main__":
     #             show=False,
     #         )
 
-
     # input_path: Path = data_path / "braedius" / "BRM-TC-Jena-P3-AdHoc-3-20220901-113654379---V0.avi"
     # output_path: Path = data_path / "braedius" / "output.avi"
 
@@ -100,4 +102,3 @@ if __name__ == "__main__":
     #     fps_out=30.0,
     #     frame_size=(1772, 1328),
     # )
-

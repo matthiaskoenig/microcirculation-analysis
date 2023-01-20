@@ -93,6 +93,7 @@ def dense_optical_flow(method, video_path, params=[], to_gray=False):
         # Update the previous frame
         old_frame = new_frame
 
+
 """
 Therefore, this function reads two consecutive frames as method input. In some cases, the image grayscaling is needed, 
 so the to_gray parameter should be set as True. After we got the algorithm output, we encode it for proper 
@@ -103,19 +104,16 @@ if __name__ == "__main__":
     video_stable: Path = data_path / "ops" / "output_stable.avi"
 
     # algorithm = 'lucaskanade_dense'
-    algorithm = 'farneback'
+    algorithm = "farneback"
 
-    if algorithm == 'lucaskanade_dense':
+    if algorithm == "lucaskanade_dense":
         # performs interpolation
         method = cv2.optflow.calcOpticalFlowSparseToDense
         params = []
-    elif algorithm == 'farneback':
+    elif algorithm == "farneback":
         method = cv2.calcOpticalFlowFarneback
         params = [0.5, 3, 15, 3, 5, 1.2, 0]  # default Farneback's algorithm parameters
 
     frames = dense_optical_flow(
-        method,
-        video_path=str(video_stable),
-        params=params,
-        to_gray=True
+        method, video_path=str(video_stable), params=params, to_gray=True
     )
