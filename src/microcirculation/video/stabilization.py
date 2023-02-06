@@ -23,9 +23,8 @@ how to deal with rotation?
 """
 from pathlib import Path
 
-
-from vidstab import VidStab
 import matplotlib.pyplot as plt
+from vidstab import VidStab
 
 from microcirculation import data_path
 

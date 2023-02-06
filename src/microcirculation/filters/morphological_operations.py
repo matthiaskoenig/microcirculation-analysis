@@ -1,6 +1,7 @@
-from PIL import Image
-import numpy as np
+"""Module defines the morphological operations."""
 import cv2
+import numpy as np
+from PIL import Image
 
 __all__ = [
     "dilate",

@@ -1,6 +1,9 @@
-import napari
+"""Example running napari.
 
-# import cv2
+Read image and display.
+"""
+
+import napari
 from skimage import data
 
 

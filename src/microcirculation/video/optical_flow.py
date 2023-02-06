@@ -29,7 +29,6 @@ from pathlib import Path
 import cv2
 import numpy as np
 
-
 # calc flow of movement
 # optical_flow = cv2.calcOpticalFlowPyrLK(self.prev_gray,
 #                                         current_frame_gray,

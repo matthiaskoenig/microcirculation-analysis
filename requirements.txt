@@ -9,3 +9,6 @@ opencv-python>=4.7.0.68
 opencv-contrib-python>=4.7.0.68
 vidstab>=1.7.4
 napari[all]>=0.4.17
+
+black>=22.3.1
+isort>=5.12.0
