@@ -2,12 +2,18 @@
 from PIL import Image
 import numpy as np
 from pathlib import Path
+import cv2
 
 from microcirculation import resources_path, results_path
 from microcirculation.filters.custom_detector.standard_transformations import *
 from microcirculation.filters.custom_detector.morphological_operations import *
 
-from microcirculation.utils import get_average_grayscale_value, stack_images
+from microcirculation.utils import get_average_grayscale_value, stack_images, get_image_segment, keypoint_detection
+
+__all__ = [
+    "threshold_vessels_detection",
+    "threshold_vessels_detection_local",
+]
 
 
 def threshold_vessels_detection(image: Image.Image, value: int = 130) -> Image.Image:
@@ -15,7 +21,52 @@ def threshold_vessels_detection(image: Image.Image, value: int = 130) -> Image.I
 
     :param value: threshold value
     """
-    return threshold(image=image, value=value)
+    # image = detect_edges_sobel(image=image)
+
+    image_0 = get_image_segment(image=image, left_perc=0, right_perc=15, top_perc=0, bottom_perc=100)
+    image_0 = gamma_transform(image_0, gamma=-0.25)
+    image_0= threshold(image=image_0, value=120, invert=True)
+    
+    image_1 = get_image_segment(image=image, left_perc=15, right_perc=35, top_perc=0, bottom_perc=100)
+    image_1 = gamma_transform(image_1, gamma=-0.3)
+    image_1 = threshold(image=image_1, value=100, invert=True)
+
+    image_11 = get_image_segment(image=image, left_perc=35, right_perc=45, top_perc=0, bottom_perc=100)
+    image_11 = gamma_transform(image_11, gamma=-0.2)
+    image_11 = threshold(image=image_11, value=45, invert=True)
+
+    image_2 = get_image_segment(image=image, left_perc=80, right_perc=100, top_perc=0, bottom_perc=100)
+    image_2 = gamma_transform(image_2, gamma=-0.2)
+    image_2 = threshold(image=image_2, value=40, invert=True)
+
+    image = threshold(image=image, value=140)
+    
+    image.paste(image_0, (0, 0))
+    image.paste(image_1, (int(0.15*image.size[0]), 0))
+    image.paste(image_11, (int(0.35*image.size[0]), 0))
+    image.paste(image_2, (int(0.80*image.size[0]), 0))
+
+    return image
+
+def threshold_vessels_detection_local(image: Image.Image, value: int = 130) -> Image.Image:
+    """Detection of vessels by thresholding edge detected image.
+
+    :param value: threshold value
+    """
+
+    image = local_histogram_equalization(image=image)
+
+    image_0 = get_image_segment(image=image, left_perc=0, right_perc=35, top_perc=0, bottom_perc=100)
+    image_0 = gamma_transform(image_0, gamma=-0.2)
+    image_0 = threshold(image=image_0, value=65, invert=True)
+
+    image = threshold(image=image, value=150)
+
+    image.paste(image_0, (0, 0))
+
+    # image = median_blur(image=image)
+
+    return image
 
 
 def threshold_vessels_detection_avg_grayscale(image: Image.Image) -> Image.Image:
@@ -65,6 +116,7 @@ def apply_all_filters(image_path: Path, results_dir: Path) -> None:
 
     for k, f_filter_pipeline in enumerate([
         threshold_vessels_detection,
+        threshold_vessels_detection_local,
         threshold_vessels_detection_avg_grayscale,
         morphological_vessels_detection,
         morpho_closing_vessels_detection,
@@ -93,10 +145,23 @@ def apply_all_filters(image_path: Path, results_dir: Path) -> None:
         image_out.save(str(image_out_path))
 
 
-if __name__ == "__main__":
-    from PIL import Image
+def superimpose_keypoints_on_image(image_path: Path, results_dir: Path) -> None:
 
+    results_dir.mkdir(exist_ok=True, parents=True)
+
+    image: Image.Image = Image.open(image_path)
+    keypoints_image: Image.Image = Image.fromarray(keypoint_detection(image, "SIFT"))
+    
+    keypoints_image_path = results_dir / f"{image_path.stem}_keypoints.png"
+    keypoints_image.save(str(keypoints_image_path))
+
+
+if __name__ == "__main__":
     results_dir: Path = results_path / "filter_pipelines"
     test_image_path: Path = resources_path / "sublingua.png"
     apply_all_filters(image_path=test_image_path, results_dir=results_dir)
+    
+    keypoints_results_dir: Path = results_dir / "keypoints"
+    image_for_keypoints: Path = results_dir / "01_sublingua_threshold_vessels_detection.png"
+    superimpose_keypoints_on_image(image_path=image_for_keypoints, results_dir=keypoints_results_dir)
 

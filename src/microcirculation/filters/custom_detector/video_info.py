@@ -173,7 +173,7 @@ def get_keypoints_for_frame(frame, kp_method: str):
         return keypoints_frame
 
     elif kp_method == "SIFT":
-        sift = cv2.SIFT_create()
+        sift = cv2.SIFT_create(nfeatures=1000)
         keypoints = sift.detect(gray_frame, None)
         keypoints_frame = cv2.drawKeypoints(gray_frame, keypoints, gray_frame)
         # keypoints_frame = cv2.drawKeypoints(gray_frame, keypoints, gray_frame, flags = cv2.DRAW_MATCHES_FLAGS_DRAW_RICH_KEYPOINTS)
@@ -225,10 +225,11 @@ def get_keypoints_and_dislay(video_path: Path, kp_method: str):
     return outfile_path
 
 
-# video_path = Path("/Users/maniklaldas/Desktop/BRM-TC-Jena-P0-AdHoc-1-20220901-092449047---V0.avi")
-video_path = Path("/Users/maniklaldas/Desktop/FMR_015-TP1-1_converted.avi")
+if __name__ == "__main__":
+    # video_path = Path("/Users/maniklaldas/Desktop/BRM-TC-Jena-P0-AdHoc-1-20220901-092449047---V0.avi")
+    video_path = Path("/Users/maniklaldas/Desktop/FMR_015-TP1-1_converted.avi")
 
-keypoint_video_path = Path(get_keypoints_and_dislay(video_path, "SIFT"))
+    keypoint_video_path = Path(get_keypoints_and_dislay(video_path, "SIFT"))
 
 # get_composite_video(video_path, keypoint_video_path, "horizontal")
 
