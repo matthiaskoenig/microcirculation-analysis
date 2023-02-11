@@ -64,7 +64,6 @@ def threshold_vessels_detection_local(
 
     :param value: threshold value
     """
-
     image = histogram_equalization_local(image=image)
 
     image_0 = get_image_segment(

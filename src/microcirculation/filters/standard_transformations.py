@@ -110,6 +110,8 @@ def normalize_frames_brightness(frames: Iterable[np.array]) -> Iterable[np.array
 
     FIXME: check this
     """
+    assert frames != None
+    frames = np.array(frames)
     max_intensity = np.max(frames)
     avg_intensity = np.mean(frames)
     frames = frames / max_intensity
