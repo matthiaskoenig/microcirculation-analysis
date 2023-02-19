@@ -124,7 +124,7 @@ def get_composite_video(
 # video_path = Path("/Users/maniklaldas/Desktop/BRM-TC-Jena-P0-AdHoc-1-20220901-092449047---V0.avi")
 video_path = Path("/Users/maniklaldas/Desktop/FMR_015-TP1-1_converted.avi")
 
-keypoint_video_path = Path(get_keypoints_and_display(video_path, "SIFT"))
+# keypoint_video_path = Path(get_keypoints_and_display(video_path, "SIFT"))
 
 # get_composite_video(video_path, keypoint_video_path, "horizontal")
 

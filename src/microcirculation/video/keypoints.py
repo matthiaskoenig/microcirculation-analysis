@@ -5,6 +5,8 @@ import cv2
 import numpy as np
 from PIL import Image
 
+from typing import Iterable
+
 from microcirculation.video.video_info import get_video_info
 
 def keypoint_detection(image: Image.Image, kp_method: str) -> Image.Image:
@@ -13,8 +15,8 @@ def keypoint_detection(image: Image.Image, kp_method: str) -> Image.Image:
     return Image.fromarray(draw_keypoints_on_frame(frame, kp_method))
 
 
-# FIXME: create method to get the actual keypoints as array!
-# FIXME: use this information to plot it on frame & napari as layer
+# FIXME: create method to get the actual keypoints as array! (DONE)
+# FIXME: use this information to plot it on frame & napari as layer (DONE)
 def get_keypoints_for_frame(frame: np.ndarray, kp_method: str) -> np.ndarray:
     """
     Calculates keypoints for the image in the given frame and returns
@@ -24,7 +26,10 @@ def get_keypoints_for_frame(frame: np.ndarray, kp_method: str) -> np.ndarray:
     @param: kp_method: the keypoint detection method (these are standard detectors)
     """
 
-    gray_frame = cv2.cvtColor(frame, cv2.COLOR_BGR2GRAY)
+    if len(frame.shape) > 2:
+        gray_frame = cv2.cvtColor(frame, cv2.COLOR_BGR2GRAY)
+    else:
+        gray_frame = frame
 
     if kp_method == "GFTT":
         keypoints = np.int0(cv2.goodFeaturesToTrack(gray_frame, maxCorners=50, qualityLevel=0.05, minDistance=10))
@@ -59,32 +64,14 @@ def draw_keypoints_on_frame(frame: np.ndarray, kp_method: str) -> np.ndarray:
 
     keypoints = get_keypoints_for_frame(frame=frame, kp_method=kp_method)
 
-    keypoint_frame = cv2.cvtColor(frame, cv2.COLOR_BGR2GRAY)
-    for keypoint in keypoints:
-        x, y = keypoint.ravel()
+    if len(frame.shape) > 2:
+        keypoint_frame = cv2.cvtColor(frame, cv2.COLOR_BGR2GRAY)
+    else:
+        keypoint_frame = frame
+
+    for kp in keypoints:
+        x, y = int(kp.pt[0]), int(kp.pt[1])
         cv2.circle(keypoint_frame, (x, y), 3, 255, -1)
-
-    # if kp_method == "GFTT":
-    #     for keypoint in keypoints:
-    #         x, y = keypoint.ravel()
-    #         cv2.circle(keypoint_frame, (x, y), 3, 255, -1)
-
-    # elif kp_method == "FAST":
-    #     keypoint_frame = cv2.drawKeypoints(keypoint_frame, keypoints, None, flags=0)
-
-    # elif kp_method == "ORB":
-    #     keypointcv2.drawKeypoints(
-    #         keypoint_frame,
-    #         keypoints,
-    #         keypoint_frame,
-    #         flags=cv2.DRAW_MATCHES_FLAGS_DRAW_RICH_KEYPOINTS,
-    #     )
-
-    # elif kp_method == "SURF":
-    #     keypoint_frame = cv2.drawKeypoints(keypoint_frame, keypoints, None, (255, 0, 0), 4)
-
-    # elif kp_method == "SIFT":
-    #     keypoint_frame = cv2.drawKeypoints(keypoint_frame, keypoints, keypoint_frame)
 
     return keypoint_frame
 
@@ -138,3 +125,31 @@ def get_keypoints_and_display(video_path: Path, kp_method: str):
     video_out.release()
 
     return outfile_path
+
+
+def get_transparent_keypoint_frame(keypoints: Iterable, frame_size: Iterable):
+    """
+    (Should) return a frame with transparent background and keypoints on it
+
+    Currently not working as expected (transparency doesn't seem working)
+    """
+    h, w = frame_size
+    black_frame = np.zeros((h, w), dtype="uint8")
+    for kp in keypoints:
+        x, y = int(kp.pt[0]), int(kp.pt[1])
+        cv2.circle(black_frame, (x, y), 3, (255, 255, 255))
+
+    black_frame = Image.fromarray(black_frame)
+
+    black_frame = black_frame.convert("RGBA")  # for alpha-conversion to make it transparent
+    pixels = black_frame.getdata()
+    new_pixels = []
+    for item in pixels:
+        if item[0] == 0 and  item[1] == 0 and item[2] == 0:
+            new_pixels.append((0, 0, 0, 0))
+        else:
+            new_pixels.append(item)
+ 
+    black_frame.putdata(new_pixels) # this frame is now transparent except for the keypoints
+    return black_frame
+    
