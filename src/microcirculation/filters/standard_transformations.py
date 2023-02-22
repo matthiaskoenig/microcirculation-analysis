@@ -99,9 +99,13 @@ def histogram_equalization_local(image: Image) -> Image:
         tileGridSize: Divides the input image into M x N tiles and then applies histogram equalization
         to each local tile
     """
-
     frame = np.array(image)
-    clahe = cv2.createCLAHE(clipLimit=2.0, tileGridSize=(1, 1))
+    print(type(frame))
+    print(frame.dtype)  # uint8: 0 to 255
+    print("Dimensions: ", frame)
+    clahe = cv2.createCLAHE(clipLimit=2.0, tileGridSize=(10, 10))
+    # FIXME: this is not working;
+
     return Image.fromarray(clahe.apply(frame))
 
 

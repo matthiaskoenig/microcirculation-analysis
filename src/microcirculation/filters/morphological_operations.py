@@ -13,10 +13,10 @@ __all__ = [
 
 def dilate(image: Image.Image, strel_size: tuple = (3, 3)) -> Image.Image:
     """Dilate image."""
-    image = np.array(image)
+    frame: np.ndarray = np.array(image)
     strel = np.ones(strel_size, np.uint8)
-    image = cv2.dilate(image, strel)
-    return Image.fromarray(image)
+    frame = cv2.dilate(frame, strel)
+    return Image.fromarray(frame)
 
 
 def erode(image: Image.Image, strel_size: tuple = (3, 3)) -> Image.Image:

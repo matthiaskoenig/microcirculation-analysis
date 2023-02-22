@@ -1,5 +1,7 @@
 from pathlib import Path
 import os
+from typing import List
+
 import numpy as np
 
 from PIL import Image
@@ -10,14 +12,15 @@ from microcirculation.utils import stack_images, write_frames_as_video
 from microcirculation.filters.standard_transformations import normalize_frames_brightness
 
 
-from video.keypoints import keypoint_detection
+from microcirculation.video.keypoints import keypoint_detection
 
 
-def apply_all_filters(image_path: Path, results_dir: Path) -> None:
+def apply_all_filters(image_path: Path, results_dir: Path) -> List[Image.Image]:
     """Apply all filter pipelines to given image."""
 
     results_dir.mkdir(exist_ok=True, parents=True)
 
+    results_images = []
     for k, f_filter_pipeline in enumerate(
         [
             threshold_vessels_detection,
@@ -44,6 +47,7 @@ def apply_all_filters(image_path: Path, results_dir: Path) -> None:
         # stack images
         # image_out: Image.Image = stack_images([image_original, image_filtered])
         image_out: Image.Image = stack_images([image_filtered])
+        results_images.append(image_out)
         # image_out = image_filtered
         # save image
         image_out_path = (
@@ -52,6 +56,7 @@ def apply_all_filters(image_path: Path, results_dir: Path) -> None:
         )
 
         image_out.save(str(image_out_path))
+    return results_images
 
 
 # FIXME: Also run all the pipelines:
@@ -104,9 +109,7 @@ if __name__ == "__main__":
     apply_all_filters(image_path=test_image_path, results_dir=results_dir)
 
     # keypoint examples
-    # TODO: Fix keypoints and plot keypoints on frames
-    
-    keypoint_detection()
+
 
     # keypoints_results_dir: Path = results_dir / "keypoints"
     # image_for_keypoints: Path = results_dir / "01_sublingua_threshold_vessels_detection.png"

@@ -66,15 +66,15 @@ def threshold_vessels_detection_local(
     """
     image = histogram_equalization_local(image=image)
 
-    image_0 = get_image_segment(
-        image=image, left_perc=0, right_perc=35, top_perc=0, bottom_perc=100
-    )
-    image_0 = gamma_transform(image_0, gamma=-0.2)
-    image_0 = threshold(image=image_0, value=65, invert=True)
+    # image_0 = get_image_segment(
+    #     image=image, left_perc=0, right_perc=35, top_perc=0, bottom_perc=100
+    # )
+    # image_0 = gamma_transform(image_0, gamma=-0.2)
+    # image_0 = threshold(image=image_0, value=65, invert=True)
 
-    image = threshold(image=image, value=150)
+    image = threshold(image=image, value=100)
 
-    image.paste(image_0, (0, 0))
+    # image.paste(image_0, (0, 0))
 
     # image = median_blur(image=image)
 

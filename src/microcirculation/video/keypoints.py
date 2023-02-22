@@ -1,6 +1,6 @@
 import copy
 from pathlib import Path
-
+from enum import Enum
 import cv2
 import numpy as np
 from PIL import Image
@@ -9,10 +9,21 @@ from typing import Iterable
 
 from microcirculation.video.video_info import get_video_info
 
+
 def keypoint_detection(image: Image.Image, kp_method: str) -> Image.Image:
     """Keypoint detection"""
-    frame = np.array(frame)
+    frame = np.array(image)
     return Image.fromarray(draw_keypoints_on_frame(frame, kp_method))
+
+
+
+kp_methods = [
+    "GFTT",
+    "FAST",
+    "ORB",
+    "SURF",
+    "SIFT",
+]
 
 
 # FIXME: create method to get the actual keypoints as array! (DONE)
@@ -25,6 +36,8 @@ def get_keypoints_for_frame(frame: np.ndarray, kp_method: str) -> np.ndarray:
     @param: frame: the image in the form of a numpy array
     @param: kp_method: the keypoint detection method (these are standard detectors)
     """
+    if kp_method not in kp_methods:
+        raise ValueError(f"Unsupported Keypoint method: '{kp_method}'")
 
     if len(frame.shape) > 2:
         gray_frame = cv2.cvtColor(frame, cv2.COLOR_BGR2GRAY)
@@ -145,7 +158,7 @@ def get_transparent_keypoint_frame(keypoints: Iterable, frame_size: Iterable):
     pixels = black_frame.getdata()
     new_pixels = []
     for item in pixels:
-        if item[0] == 0 and  item[1] == 0 and item[2] == 0:
+        if item[0] == 0 and item[1] == 0 and item[2] == 0:
             new_pixels.append((0, 0, 0, 0))
         else:
             new_pixels.append(item)
