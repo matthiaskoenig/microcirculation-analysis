@@ -1,4 +1,15 @@
 # TODO
+## example frames
+- [ ] write code to extract frames from videos
+- [ ] create a set of test images from videos covering the different tests (IPS_sublingual, IPS_liver, OPS_liver, IDF_liver)
+
+## add smaller steps in processing (with example output)
+- ([ ] global equalization (contrast enhancement))
+- [ ] local histogram equalization adjustment (already implemented)
+
+- [ ] edge detection
+- [ ] otsu thresholding;
+
 
 ## write custom keypoint method
 - [ ] process single frames and return dummy keypoint data structure which can be used in stabilization
