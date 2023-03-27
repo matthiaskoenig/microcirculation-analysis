@@ -1,14 +1,20 @@
 # TODO
 ## example frames
-- [ ] write code to extract frames from videos
-- [ ] create a set of test images from videos covering the different tests (IPS_sublingual, IPS_liver, OPS_liver, IDF_liver)
+- [x] write code to extract frames from videos
+- [x] create a set of test images from videos covering the different tests (IPS_sublingual, IPS_liver, OPS_liver, IDF_liver)
 
 ## add smaller steps in processing (with example output)
-- ([ ] global equalization (contrast enhancement))
-- [ ] local histogram equalization adjustment (already implemented)
+- [x] global equalization (contrast enhancement)
+- [x] local histogram equalization adjustment (already implemented)
 
-- [ ] edge detection
-- [ ] otsu thresholding;
+- [~] edge detection
+- [~] otsu thresholding;
+
+## Run the pipeline over videos
+- [ ] run global contrast adjustment & adaptive thresholding (time this! How long does this take) => store the processed video; and get the transformation
+- [ ] combine with keypoint method & try stabilization (i.e. run over processed video); 
+      => store results of pipeline: 1. what where the adjustments from to frame (x,y, rotation) (this is an output of the stabilization algorithm); 2. keypoints for every frame 
+- [ ] apply the (x,y, rotation) on the actual video
 
 
 ## write custom keypoint method
