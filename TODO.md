@@ -11,10 +11,10 @@
 - [~] otsu thresholding;
 
 ## Run the pipeline over videos
-- [ ] run global contrast adjustment & adaptive thresholding (time this! How long does this take) => store the processed video; and get the transformation
-- [ ] combine with keypoint method & try stabilization (i.e. run over processed video); 
+- [x] run global contrast adjustment & adaptive thresholding (time this! How long does this take) => store the processed video; and get the transformation
+- [x] combine with keypoint method & try stabilization (i.e. run over processed video); 
       => store results of pipeline: 1. what where the adjustments from to frame (x,y, rotation) (this is an output of the stabilization algorithm); 2. keypoints for every frame 
-- [ ] apply the (x,y, rotation) on the actual video
+- [x] apply the (x,y, rotation) on the actual video
 
 
 ## write custom keypoint method

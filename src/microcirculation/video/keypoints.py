@@ -1,14 +1,16 @@
 import copy
 from pathlib import Path
-from enum import Enum
+import os
+from typing import Iterable
+from datetime import datetime
+
 import cv2
 import numpy as np
 from PIL import Image
 
-from typing import Iterable
-
-from microcirculation.video.video_info import get_video_info
-
+from microcirculation.utils import extract_video_frames
+from microcirculation import results_path
+from microcirculation.utils import stringify_time
 
 def keypoint_detection(image: Image.Image, kp_method: str) -> Image.Image:
     """Keypoint detection"""
@@ -26,8 +28,6 @@ kp_methods = [
 ]
 
 
-# FIXME: create method to get the actual keypoints as array! (DONE)
-# FIXME: use this information to plot it on frame & napari as layer (DONE)
 def get_keypoints_for_frame(frame: np.ndarray, kp_method: str) -> np.ndarray:
     """
     Calculates keypoints for the image in the given frame and returns
@@ -105,39 +105,40 @@ def superimpose_keypoints_on_image(image_path: Path, results_dir: Path) -> None:
     keypoints_image.save(str(keypoints_image_path))
 
 
-def get_keypoints_and_display(video_path: Path, kp_method: str):
+def generate_keypoint_video(video_path: Path, kp_method: str = "SIFT") -> Path:
     """
     Calculate keypoints and visualize on video/frames
     example: https://www.oreilly.com/library/view/computer-vision-with/9781788472395/1ff16b52-a319-4c94-b02d-574c56c84f75.xhtml
     """
 
-    video_info = get_video_info(video_path)
-    frame_rate = video_info["frame_rate"]
+    start_time = datetime.now()
 
-    video_in = cv2.VideoCapture(str(video_path))
+    if "keypoint_videos" not in os.listdir(results_path):
+        os.mkdir(results_path / "keypoint_videos")
+    keypoint_video_path = results_path / "keypoint_videos" / f"{video_path.stem}_keypoints{video_path.suffix}"
 
-    extension = str(video_path).split(".")[-1]
-    outfile_path = "".join(str(video_path).split(".")[:-1]) + "_keypoints." + extension
+    video_frames, frame_size, frame_rate = extract_video_frames(video_path)
+
     video_out = cv2.VideoWriter(
-        outfile_path,
-        cv2.VideoWriter_fourcc("M", "J", "P", "G"),
+        str(keypoint_video_path),
+        cv2.VideoWriter_fourcc(*'MJPG'),
         frame_rate,
-        (int(video_in.get(3)), int(video_in.get(4))),
+        frame_size,
+        False
     )
 
-    while True:
-        ret, frame = video_in.read()
+    for frame in video_frames:
+        keypoint_frame = draw_keypoints_on_frame(frame, kp_method)
+        video_out.write(keypoint_frame)
 
-        if ret:
-            keypoint_frame = draw_keypoints_on_frame(frame, kp_method)
-            video_out.write(keypoint_frame)
-        else:
-            break
-
-    video_in.release()
     video_out.release()
 
-    return outfile_path
+    end_time = datetime.now()
+
+    keypoint_detection_time = int((end_time - start_time).total_seconds())
+    print(f"*** Keypoints detected in {stringify_time(keypoint_detection_time)} ***")    
+
+    return keypoint_video_path
 
 
 def get_transparent_keypoint_frame(keypoints: Iterable, frame_size: Iterable):
@@ -165,4 +166,3 @@ def get_transparent_keypoint_frame(keypoints: Iterable, frame_size: Iterable):
  
     black_frame.putdata(new_pixels) # this frame is now transparent except for the keypoints
     return black_frame
-    

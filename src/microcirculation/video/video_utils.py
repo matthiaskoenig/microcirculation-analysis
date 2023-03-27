@@ -6,9 +6,16 @@ import copy
 import os
 import subprocess
 from pathlib import Path
+from typing import Iterable
+from datetime import datetime
 
 import cv2
 import numpy as np
+from PIL import Image
+
+from microcirculation import results_path
+from microcirculation.utils import extract_video_frames, stringify_time
+from microcirculation.filters.vessel_detection import detect_vessels_in_frame
 
 composite_videos_path = Path("./composite_videos")
 
@@ -121,12 +128,41 @@ def get_composite_video(
     cv2.destroyAllWindows()
 
 
-# video_path = Path("/Users/maniklaldas/Desktop/BRM-TC-Jena-P0-AdHoc-1-20220901-092449047---V0.avi")
-video_path = Path("/Users/maniklaldas/Desktop/FMR_015-TP1-1_converted.avi")
+def generate_vessel_detected_video(video_path: Path, detection_config: Iterable) -> Path:
+    """
+    Detects vessels in each frame of the video and produces
+    a video using such vessel detected frames.
+    """
 
-# keypoint_video_path = Path(get_keypoints_and_display(video_path, "SIFT"))
+    start_time = datetime.now()
 
-# get_composite_video(video_path, keypoint_video_path, "horizontal")
+    if "vessel_videos" not in os.listdir(results_path):
+        os.mkdir(results_path / "vessel_videos")
+    vessel_video_path = results_path / "vessel_videos" / f"{video_path.stem}_vessels{video_path.suffix}"
+
+    video_frames, frame_size, frame_rate = extract_video_frames(video_path)
+
+    video_out_buffer = cv2.VideoWriter(
+        str(vessel_video_path),
+        cv2.VideoWriter_fourcc(*'MJPG'),
+        frame_rate,
+        frame_size,
+        False
+    )
+    
+    for frame in video_frames:
+        image = Image.fromarray(frame)
+        vessel_frame, _ = detect_vessels_in_frame(image, "", detection_config)
+        video_out_buffer.write(np.array(vessel_frame))
+
+    video_out_buffer.release()
+
+    end_time = datetime.now()
+
+    vessel_detection_time = int((end_time - start_time).total_seconds())
+    print(f"*** Vessels detected in {stringify_time(vessel_detection_time)} ***")    
+
+    return vessel_video_path
 
 
 """

@@ -7,7 +7,7 @@ import numpy as np
 from PIL import Image
 
 from microcirculation import resources_path, results_path
-from microcirculation.filters.filter import *
+from microcirculation.filters.vessel_detection import *
 from microcirculation.utils import stack_images, write_frames_as_video
 from microcirculation.filters.standard_transformations import normalize_frames_brightness
 

@@ -2,6 +2,9 @@
 data
 __pycache__
 src/microcirculation/composite_videos
+composite_videos/
+src/microcirculation/results
+src/microcirculation/resources
 src/.DS_Store
 .DS_Store
 

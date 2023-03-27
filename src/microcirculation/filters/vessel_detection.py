@@ -1,10 +1,16 @@
 """General filters for frame processing."""
 import numpy as np
 from PIL import Image
+from pathlib import Path
+import os
+import cv2
+from typing import Iterable
 
 from microcirculation.filters.morphological_operations import *
 from microcirculation.filters.standard_transformations import *
 from microcirculation.utils import get_average_grayscale_value, get_image_segment
+from microcirculation.filters.vessel_detection import *
+from microcirculation import resources_path, results_path
 
 __all__ = [
     "threshold_vessels_detection",
@@ -119,3 +125,59 @@ def blur_erosion_vessels_detection(image: Image.Image) -> Image.Image:
     image_blur: Image.Image = gaussian_filter(image)
     image = Image.fromarray(np.array(image) - np.array(image_blur))
     return erode(image)
+
+
+def detect_vessels_in_frame(image: Image.Image, output_path: str, config: Iterable) -> Image.Image:
+    if "global_hist" in config:
+        image = histogram_equalization_global(image=image)
+        output_path = output_path + "_ghe"
+    if "local_hist" in config:
+        image = histogram_equalization_local(image=image)
+        output_path = output_path + "_lhe"
+    if "gaussian" in config:
+        radius = 1
+        image = gaussian_filter(image=image, radius=radius)
+        output_path = output_path + "_gn"
+    if "canny" in config:
+        image = canny_edge_detection(image=image)
+        output_path = output_path + "_edges"
+    if "ada_thresh" in config:
+        image = adaptive_thresholding(image=image)
+        output_path = output_path + "_adathresh"
+    if "otsu" in config:
+        image = otsu(image=image)
+        output_path = output_path + "_otsu"
+    if "median" in config:
+        image = median_blur(image=image)
+        output_path = output_path + "_md"
+
+    return image, output_path
+
+
+def vessel_detection_pipeline(image_path: Path, output_dir: Path, config: Iterable):
+    output_path = output_dir / f"{image_path.stem}"
+
+    frame = cv2.imread(str(image_path), 0)
+    image = Image.fromarray(frame)
+
+    image, output_path = detect_vessels_in_frame(image=image, output_path=str(output_path))
+    
+    output_path = str(output_path) + ".png"
+
+    frame = np.array(image)
+    cv2.imwrite(output_path, frame)
+
+
+if __name__ == "__main__":
+    image_path = results_path / "frames" / "FMR_015-TP1-1_converted" / "FMR_015-TP1-1_converted_frame0.png"
+
+    output_dir = results_path / "pipeline_results"
+    if not os.path.exists(output_dir):
+        os.mkdir(output_dir)
+
+    configs = [
+        ["global_hist", "local_hist", "ada_thresh", "median"]
+    ]
+
+    for config in configs:
+        vessel_detection_pipeline(image_path=image_path, output_dir=output_dir, config=config)

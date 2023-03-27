@@ -4,7 +4,7 @@ import shutil
 import cv2
 
 from microcirculation import resources_path, results_path
-from microcirculation.video.video_info import get_video_info
+from microcirculation.video.video_utils import get_video_info
 
 def extract_frames_from_video(video_path: Path, frame_capture_interval: int, results_dir: Path) -> None:
     """

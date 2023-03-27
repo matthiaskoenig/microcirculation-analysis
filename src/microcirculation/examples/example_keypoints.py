@@ -15,13 +15,14 @@ import cv2
 
 from typing import Iterable
 
-from microcirculation.filters.filter import threshold_vessels_detection_local
+from microcirculation.filters.vessel_detection import threshold_vessels_detection_local
 from microcirculation.video.keypoints import (
     get_keypoints_for_frame,
     get_transparent_keypoint_frame,
-    draw_keypoints_on_frame
+    draw_keypoints_on_frame,
+    generate_keypoint_video
 )
-from microcirculation import resources_path
+from microcirculation import resources_path, results_path
 
 
 def superimpose_keypoints_on_frame(src_path: Path) -> None:
@@ -46,31 +47,34 @@ if __name__ == "__main__":
     # # visualize_frames_in_napari_from_path(frame_paths=frame_paths)
 
 
-    from microcirculation.napari_visualization import get_napari_viewer
+    # from microcirculation.napari_visualization import get_napari_viewer
 
-    viewer = get_napari_viewer()
-    image_path = resources_path / "sublingua.png"
-    frame = cv2.imread(str(image_path))
-    viewer.add_image(frame, name="rgb image", visible=False)
-    frame_gray: np.ndarray = cv2.cvtColor(frame, cv2.COLOR_BGR2GRAY)
-    viewer.add_image(frame_gray, name="gray image")
+    # viewer = get_napari_viewer()
+    # image_path = resources_path / "sublingua.png"
+    # frame = cv2.imread(str(image_path))
+    # viewer.add_image(frame, name="rgb image", visible=False)
+    # frame_gray: np.ndarray = cv2.cvtColor(frame, cv2.COLOR_BGR2GRAY)
+    # viewer.add_image(frame_gray, name="gray image")
 
-    # frame preprocessing
+    # # frame preprocessing
 
-    image_gray = Image.fromarray(frame_gray)
-    image_processed = threshold_vessels_detection_local(image_gray)
-    frame_processed = np.array(image_processed)
-    viewer.add_image(frame_processed, name="processed image", opacity=0.5)
+    # image_gray = Image.fromarray(frame_gray)
+    # image_processed = threshold_vessels_detection_local(image_gray)
+    # frame_processed = np.array(image_processed)
+    # viewer.add_image(frame_processed, name="processed image", opacity=0.5)
 
-    # keypoint detection and visualization
-    keypoints: Iterable[cv2.KeyPoint] = get_keypoints_for_frame(frame_processed, kp_method="SIFT")
-    # print(keypoints)
-    kp: cv2.KeyPoint
-    points = [(kp.pt[1], kp.pt[0]) for kp in keypoints]
+    # # keypoint detection and visualization
+    # keypoints: Iterable[cv2.KeyPoint] = get_keypoints_for_frame(frame_processed, kp_method="SIFT")
+    # # print(keypoints)
+    # kp: cv2.KeyPoint
+    # points = [(kp.pt[1], kp.pt[0]) for kp in keypoints]
 
-    # points = np.array([[100, 100], [200, 200], [300, 100]])
-    points_layer = viewer.add_points(points, opacity=0.5, edge_width=0.2, face_color="white", edge_color="black", size=10)
+    # # points = np.array([[100, 100], [200, 200], [300, 100]])
+    # points_layer = viewer.add_points(points, opacity=0.5, edge_width=0.2, face_color="white", edge_color="black", size=10)
 
-    napari.run()
+    # napari.run()
 
 
+    video_path = results_path / "vessel_videos" / "BRM-TC-Jena-P0-AdHoc-1-20220901-092449047---V0_vessels..avi"
+
+    keypoint_video_path = generate_keypoint_video(video_path=video_path)
