@@ -14,6 +14,9 @@ __all__ = [
     "median_blur",
     "detect_edges_sobel",
     "normalize_frames_brightness",
+    "canny_edge_detection",
+    "adaptive_thresholding",
+    "otsu"
 ]
 
 
@@ -36,7 +39,7 @@ def median_blur(image: Image) -> Image:
     Each channel of a multi-channel image is processed independently. In-place operation is supported.
     """
     frame = np.array(image)
-    frame_blur = cv2.medianBlur(frame, ksize=3)
+    frame_blur = cv2.medianBlur(frame, ksize=5)
     return Image.fromarray(frame_blur)
 
 
@@ -100,9 +103,9 @@ def histogram_equalization_local(image: Image) -> Image:
         to each local tile
     """
     frame = np.array(image)
-    print(type(frame))
-    print(frame.dtype)  # uint8: 0 to 255
-    print("Dimensions: ", frame)
+    # print(type(frame))
+    # print(frame.dtype)  # uint8: 0 to 255
+    # print("Dimensions: ", frame)
     clahe = cv2.createCLAHE(clipLimit=2.0, tileGridSize=(10, 10))
     # FIXME: this is not working;
 
@@ -122,3 +125,22 @@ def normalize_frames_brightness(frames: Iterable[np.array]) -> Iterable[np.array
     frames = frames * avg_intensity
 
     return frames
+
+
+def canny_edge_detection(image: Image.Image):
+    frame = np.array(image)
+    edges = cv2.Canny(frame, 100, 200)
+    return Image.fromarray(edges)
+
+
+def adaptive_thresholding(image: Image.Image):
+    frame = np.array(image)
+    frame = cv2.adaptiveThreshold(frame, 255, cv2.ADAPTIVE_THRESH_GAUSSIAN_C, cv2.THRESH_BINARY, 99, 2)
+    return Image.fromarray(frame)
+
+
+def otsu(image: Image.Image):
+    frame = np.array(image)
+    blur = cv2.GaussianBlur(frame, (25, 25), 0)
+    succ_value, frame = cv2.threshold(frame, 0, 255, cv2.THRESH_BINARY+cv2.THRESH_OTSU)
+    return frame
