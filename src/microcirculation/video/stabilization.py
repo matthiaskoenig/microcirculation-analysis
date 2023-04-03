@@ -17,64 +17,72 @@ pip install vidstab[cv2]
 Necessary to find the correct keypoints:
 https://www.pythonpool.com/opencv-keypoint/
 how to deal with rotation?
-
-
-
 """
-import os
-from datetime import datetime
 from pathlib import Path
-from typing import Iterable
-
+from typing import Optional
+import time
 import matplotlib.pyplot as plt
 from vidstab import VidStab
 
-from microcirculation import resources_dir, results_dir
-from microcirculation.utils import stringify_time
-from microcirculation.video.video_utils import (
-    generate_vessel_detected_video,
-    get_video_info,
-)
+from microcirculation.console import console
 
 
-def stabilize_video(original_video_path: Path, vessels_video_path: Path):
-    start_time = datetime.now()
+def stabilize_video(
+        video_stabilize: Path,
+        video_keypoints: Optional[Path],
+        video_out: Path,
+        smoothing_window: int,
+):
+    """Stabilize video based on keypoints in processed video."""
+    console.print(f"stabilize_video: {video_stabilize}")
+    start = time.time()
 
+    if video_keypoints is None:
+        # use the original video for keypoints if no video is provided
+        video_keypoints = video_stabilize
+
+    # FIXME: improve methods & visualize keypoints
     stabilizer = VidStab(kp_method="DENSE")
 
-    smoothing_window: int = 35
     stabilizer.gen_transforms(
-        input_path=str(vessels_video_path),
-        smoothing_window=smoothing_window,  # FIXME: this must be adjusted
+        input_path=str(video_keypoints),
+        smoothing_window=smoothing_window,
         show_progress=True,
     )
 
-    if "stabilized_videos" not in os.listdir(results_dir):
-        os.mkdir(results_dir / "stabilized_videos")
-    if original_video_path.stem not in os.listdir(results_dir / "stabilized_videos"):
-        os.mkdir(results_dir / "stabilized_videos" / original_video_path.stem)
+    stabilizer.apply_transforms(str(video_stabilize), str(video_out), output_fourcc='FFV1')
 
-    stabilized_video_path = (
-        results_dir
-        / "stabilized_videos"
-        / original_video_path.stem
-        / f"{original_video_path.stem}_stabilized{original_video_path.suffix}"
-    )
-    stabilizer.apply_transforms(str(original_video_path), str(stabilized_video_path))
+    console.print(f"video stabilized in: {time.time() - start:.2f} seconds")
 
+    # figures of stabilization trajectories
     fig1, (ax1, ax2) = stabilizer.plot_trajectory()
-    fig1.savefig(stabilized_video_path.parent / f"trajectory.png", bbox_inches="tight")
+    fig1.savefig(video_out.parent / f"{video_out.stem}_trajectory.png", bbox_inches="tight")
 
     fig2, (ax3, ax4) = stabilizer.plot_transforms()
-    fig2.savefig(stabilized_video_path.parent / f"transforms.png", bbox_inches="tight")
-
-    end_time = datetime.now()
-
-    stabilization_time = int((end_time - start_time).total_seconds())
-    print(f"Video stabilized in {stringify_time(stabilization_time)}")
+    fig2.savefig(video_out.parent / f"{video_out.stem}_transforms.png", bbox_inches="tight")
+    plt.show()
 
 
 if __name__ == "__main__":
-    video_path = resources_dir / "BRM-TC-Jena-P0-AdHoc-1-20220901-092449047---V0.avi"
-    detection_config = ["global_hist", "ada_thresh", "median"]
-    stabilize_video(video_path=video_path, detection_config=detection_config)
+
+
+    from microcirculation import data_dir
+    video_stabilize = data_dir / "test" / "FMR_010-TP1-1_converted.avi"
+    video_keypoints = data_dir / "test" / "FMR_010-TP1-1_vessels.avi"
+
+    # framerate on the OPS videos is 30 frames/second
+    smoothing_window = 60
+
+    # stabilize_video(
+    #     video_stabilize=video_stabilize,
+    #     video_keypoints=None,
+    #     video_out=data_dir / "test" / "FMR_010-TP1-1_raw_stable.avi",
+    #     smoothing_window=smoothing_window,
+    # )
+
+    stabilize_video(
+        video_stabilize=video_stabilize,
+        video_keypoints=video_keypoints,
+        video_out=data_dir / "test" / "FMR_010-TP1-1_vessels_stable.avi",
+        smoothing_window=smoothing_window,
+    )
