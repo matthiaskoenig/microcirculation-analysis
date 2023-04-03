@@ -106,11 +106,17 @@ if __name__ == "__main__":
     #     filters=["local_hist"],
     # )
     process_video(
-        video_in=data_dir
-        / "test"
-        / "BRM-TC-Jena-P0-AdHoc-1-20220901-092449047---V0.avi_converted.avi",
-        video_out=data_dir
-        / "test"
-        / "BRM-TC-Jena-P0-AdHoc-1-20220901-092449047---V0.avi_processed_treshold.avi",
-        filters=["local_hist", "gauss", "ada_thresh"],
+        video_in=data_dir / "test" / "rat_liver_idf.avi",
+        video_out=data_dir / "test" / "rat_liver_idf_lhe.avi",
+        filters=["local_hist"], #["local_hist", "gauss", "ada_thresh"],
+    )
+    process_video(
+        video_in=data_dir / "test" / "rat_liver_ops.avi",
+        video_out=data_dir / "test" / "rat_liver_ops_lhe.avi",
+        filters=["local_hist"],  # ["local_hist", "gauss", "ada_thresh"],
+    )
+    process_video(
+        video_in=data_dir / "test" / "human_sublingual_idf.avi",
+        video_out=data_dir / "test" / "human_sublingual_idf_lhe.avi",
+        filters=["local_hist"],  # ["local_hist", "gauss", "ada_thresh"],
     )

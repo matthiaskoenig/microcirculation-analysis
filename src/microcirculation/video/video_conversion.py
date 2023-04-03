@@ -61,6 +61,9 @@ def convert_video(
 def convert_video_directory(input_dir, output_dir, fps_out: float):
     """Convert videos."""
 
+    # TODO: parallelization
+    # videos =
+
     for video_in in sorted(input_dir.glob("*.avi")):
         video_out = output_dir / f"{video_in.name}"
         convert_video(
@@ -72,24 +75,24 @@ def convert_video_directory(input_dir, output_dir, fps_out: float):
 
 if __name__ == "__main__":
     # test videos
-    # video_conversion(
-    #     input_path=data_dir / "test" / "rat_liver_ops.avi",
-    #     output_path=data_dir / "test" / "rat_liver_ops_converted.avi",
+    # convert_video(
+    #     input_path=data_dir / "test" / "rat_liver_ops_raw.avi",
+    #     output_path=data_dir / "test" / "rat_liver_ops.avi",
     #     fps_out=30.0,  # slow down IDF images
     # )
-    # video_conversion(
-    #     input_path=data_dir / "test" / "rat_liver_idf.avi",
-    #     output_path=data_dir / "test" / "rat_liver_idf_converted.avi",
+    # convert_video(
+    #     input_path=data_dir / "test" / "rat_liver_idf_raw.avi",
+    #     output_path=data_dir / "test" / "rat_liver_idf.avi",
     #     fps_out=30.0,  # slow down IDF images
     # )
-    # video_conversion(
-    #     input_path=data_dir / "test" / "human_sublingual_idf.avi",
-    #     output_path=data_dir / "test" / "human_sublingual_converted.avi",
+    # convert_video(
+    #     input_path=data_dir / "test" / "human_sublingual_idf_raw.avi",
+    #     output_path=data_dir / "test" / "human_sublingual.avi",
     #     fps_out=30.0,  # slow down IDF images
     # )
 
     # convert ops videos
-    # video_conversion_directory(
+    # convert_video_directory(
     #     input_dir=data_dir / "rat_liver_ops" / "videos" / "raw",
     #     output_dir=data_dir / "rat_liver_ops" / "videos" / "converted",
     #     fps_out=30.0,
@@ -101,8 +104,8 @@ if __name__ == "__main__":
     #     fps_out=30.0,  # slow down idf videos
     # )
 
-    convert_video_directory(
-        input_dir=data_dir / "human_sublingual_idf" / "videos" / "raw",
-        output_dir=data_dir / "human_sublingual_idf" / "videos" / "converted",
-        fps_out=30.0,  # slow down idf videos
-    )
+    # convert_video_directory(
+    #     input_dir=data_dir / "human_sublingual_idf" / "videos" / "raw",
+    #     output_dir=data_dir / "human_sublingual_idf" / "videos" / "converted",
+    #     fps_out=30.0,  # slow down idf videos
+    # )
