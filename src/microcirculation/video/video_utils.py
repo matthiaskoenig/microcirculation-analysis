@@ -89,6 +89,3 @@ def get_composite_video(
 
     video_file.release()
     cv2.destroyAllWindows()
-
-
-

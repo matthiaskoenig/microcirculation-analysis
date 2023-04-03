@@ -132,13 +132,16 @@ def blur_erosion_vessels_detection(image: Image.Image) -> Image.Image:
 def detect_vessels_in_frame(
     image: Image.Image, config: Iterable[str], output_path: str = ""
 ) -> Image.Image:
-
     # FIXME: remove the file namings
     if "global_hist" in config:
         image = histogram_equalization_global(image=image)
         output_path = output_path + "_ghe"
     if "local_hist" in config:
-        image = histogram_equalization_local(image=image)
+        clipLimit = 2.0
+        tileGridSize = (10, 10)
+        image = histogram_equalization_local(
+            image=image, clipLimit=clipLimit, tileGridSize=tileGridSize
+        )
         output_path = output_path + "_lhe"
     if "gaussian" in config:
         radius = 1

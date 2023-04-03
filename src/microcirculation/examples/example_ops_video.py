@@ -9,14 +9,12 @@ from typing import Callable, Iterable
 import cv2
 import numpy as np
 from PIL import Image
-from microcirculation.utils import extract_video_frames, write_frames_as_video
-from microcirculation.video.keypoints import generate_keypoint_video
 
 from microcirculation import resources_dir, results_dir
-
+from microcirculation.utils import extract_video_frames, write_frames_as_video
+from microcirculation.video.keypoints import generate_keypoint_video
 from microcirculation.video.stabilization import stabilize_video
 from microcirculation.video.video_utils import generate_vessel_detected_video
-
 
 # def apply_preprocess_filters(
 #     video_in: Path, video_out_base: Path, filters=Iterable[Callable]
@@ -64,20 +62,15 @@ if __name__ == "__main__":
 
     # process video (vessel detection)
 
-
     # stabilization with keypoints from vessel structures
-
 
     # vessel processing
 
-
     # flow calculation
-
 
     video_path = resources_dir / "FMR_015-TP1-1_converted.avi"
     vessels_video_path = generate_vessel_detected_video(
-        video_path=video_path,
-        detection_config=["global_hist", "ada_thresh", "median"]
+        video_path=video_path, detection_config=["global_hist", "ada_thresh", "median"]
     )
 
     stabilize_video(

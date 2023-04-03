@@ -13,5 +13,4 @@ mkvirtualenv microcirculation --python=python3.10
 2. Convert OPS videos to new AVI format with [ops/video_conversion.py](./src/microcirculation/ops/video_conversion.py)
 
 
-
 © 2022-2023 Sankha Das & Matthias König

@@ -65,6 +65,9 @@ if __name__ == "__main__":
     video_example = data_dir / "test" / "FMR_010-TP1-1.avi"
     console.print(get_video_info(video_path=video_example))
 
+    # ---------------------------
+    # OPS
+    # ---------------------------
     # The OPS has a resolution of approximately 1 µm/pixel (6)
     metadata = {
         "device": "ops",
@@ -79,5 +82,30 @@ if __name__ == "__main__":
         video_dir=video_dir,
         metadata=metadata,
         xlsx_out=data_dir / "rat_liver_ops" / "video_info.xlsx",
+    )
+    console.print(df.to_string())
+
+    # ---------------------------
+    # IDF
+    # ---------------------------
+    # The IDF has a resolution of approximately ? 1 µm/pixel (6)
+    # (1328 x 1772) @ 95 fps,
+    # The camera is fully digital and contains a high-resolution sensor with a pixel
+    # size of 1,4 micron. As it is used in binning mode the effective pixel size is 2.8 micron,
+    # resulting in a 3.5 megapixel frame size. The combination of a 4x optical magnification with
+    # the sensor image area provides a 1,55 x 1,16 mm
+    metadata = {
+        "device": "idf",
+        "species": "human",
+        "tissue": "sublingual",
+        "pixel_width": 1,  # FIXME
+        "pixel_height": 1,  # FIXME
+        "pixel_unit": "µm",
+    }
+    video_dir = data_dir / "human_sublingual_idf" / "videos"
+    df = get_video_infos(
+        video_dir=video_dir,
+        metadata=metadata,
+        xlsx_out=data_dir / "human_sublingual_idf" / "video_info.xlsx",
     )
     console.print(df.to_string())

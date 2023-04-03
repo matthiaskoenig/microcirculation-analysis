@@ -93,7 +93,9 @@ def histogram_equalization_global(image: Image) -> Image:
     return Image.fromarray(frame_equalized)
 
 
-def histogram_equalization_local(image: Image) -> Image:
+def histogram_equalization_local(
+    image: Image, clipLimit=2.0, tileGridSize=(10, 10)
+) -> Image:
     """Apply local histogram equalization using CLAHE.
 
     https://docs.opencv.org/3.4/d6/db6/classcv_1_1CLAHE.html
@@ -103,11 +105,7 @@ def histogram_equalization_local(image: Image) -> Image:
         to each local tile
     """
     frame = np.array(image)
-    # print(type(frame))
-    # print(frame.dtype)  # uint8: 0 to 255
-    # print("Dimensions: ", frame)
-    clahe = cv2.createCLAHE(clipLimit=2.0, tileGridSize=(10, 10))
-    # FIXME: this is not working;
+    clahe = cv2.createCLAHE(clipLimit=clipLimit, tileGridSize=tileGridSize)
 
     return Image.fromarray(clahe.apply(frame))
 
@@ -128,6 +126,8 @@ def normalize_frames_brightness(frames: Iterable[np.array]) -> Iterable[np.array
 
 
 def canny_edge_detection(image: Image.Image):
+    """What are the settings here."""
+
     frame = np.array(image)
     edges = cv2.Canny(frame, 100, 200)
     return Image.fromarray(edges)

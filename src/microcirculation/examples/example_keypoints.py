@@ -18,7 +18,6 @@ from microcirculation.video.keypoints import (
     draw_keypoints_on_frame,
     generate_keypoint_video,
     get_keypoints_for_frame,
-    get_transparent_keypoint_frame,
 )
 
 
