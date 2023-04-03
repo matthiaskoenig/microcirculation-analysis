@@ -16,7 +16,7 @@ __all__ = [
     "normalize_frames_brightness",
     "canny_edge_detection",
     "adaptive_thresholding",
-    "otsu"
+    "otsu",
 ]
 
 
@@ -135,12 +135,16 @@ def canny_edge_detection(image: Image.Image):
 
 def adaptive_thresholding(image: Image.Image):
     frame = np.array(image)
-    frame = cv2.adaptiveThreshold(frame, 255, cv2.ADAPTIVE_THRESH_GAUSSIAN_C, cv2.THRESH_BINARY, 99, 2)
+    frame = cv2.adaptiveThreshold(
+        frame, 255, cv2.ADAPTIVE_THRESH_GAUSSIAN_C, cv2.THRESH_BINARY, 99, 2
+    )
     return Image.fromarray(frame)
 
 
 def otsu(image: Image.Image):
     frame = np.array(image)
     blur = cv2.GaussianBlur(frame, (25, 25), 0)
-    succ_value, frame = cv2.threshold(frame, 0, 255, cv2.THRESH_BINARY+cv2.THRESH_OTSU)
+    succ_value, frame = cv2.threshold(
+        frame, 0, 255, cv2.THRESH_BINARY + cv2.THRESH_OTSU
+    )
     return frame

@@ -1,22 +1,21 @@
 import copy
-from pathlib import Path
 import os
-from typing import Iterable
 from datetime import datetime
+from pathlib import Path
+from typing import Iterable
 
 import cv2
 import numpy as np
 from PIL import Image
 
-from microcirculation.utils import extract_video_frames
 from microcirculation import results_dir
-from microcirculation.utils import stringify_time
+from microcirculation.utils import extract_video_frames, stringify_time
+
 
 def keypoint_detection(image: Image.Image, kp_method: str) -> Image.Image:
     """Keypoint detection"""
     frame = np.array(image)
     return Image.fromarray(draw_keypoints_on_frame(frame, kp_method))
-
 
 
 kp_methods = [
@@ -45,7 +44,11 @@ def get_keypoints_for_frame(frame: np.ndarray, kp_method: str) -> np.ndarray:
         gray_frame = frame
 
     if kp_method == "GFTT":
-        keypoints = np.int0(cv2.goodFeaturesToTrack(gray_frame, maxCorners=50, qualityLevel=0.05, minDistance=10))
+        keypoints = np.int0(
+            cv2.goodFeaturesToTrack(
+                gray_frame, maxCorners=50, qualityLevel=0.05, minDistance=10
+            )
+        )
 
     elif kp_method == "FAST":
         fast_detector = cv2.FastFeatureDetector_create()
@@ -68,7 +71,7 @@ def get_keypoints_for_frame(frame: np.ndarray, kp_method: str) -> np.ndarray:
 
 def draw_keypoints_on_frame(frame: np.ndarray, kp_method: str) -> np.ndarray:
     """
-    Get Keypoints for given frame and superimposes the keypoints 
+    Get Keypoints for given frame and superimposes the keypoints
     on the frame in the form of circles.
 
     @param: frame: the image in the form of a numpy array
@@ -92,7 +95,7 @@ def draw_keypoints_on_frame(frame: np.ndarray, kp_method: str) -> np.ndarray:
 def superimpose_keypoints_on_image(image_path: Path, results_dir: Path) -> None:
     """
     Detect and superimpose keypoints on a single image (given by image path)
-    
+
     @param: image_path: the path to the image for keypoint detection
     @param: results_dir: the directory in which the superimposed image is stored
     """
@@ -115,16 +118,20 @@ def generate_keypoint_video(video_path: Path, kp_method: str = "SIFT") -> Path:
 
     if "keypoint_videos" not in os.listdir(results_dir):
         os.mkdir(results_dir / "keypoint_videos")
-    keypoint_video_path = results_dir / "keypoint_videos" / f"{video_path.stem}_keypoints{video_path.suffix}"
+    keypoint_video_path = (
+        results_dir
+        / "keypoint_videos"
+        / f"{video_path.stem}_keypoints{video_path.suffix}"
+    )
 
     video_frames, frame_size, frame_rate = extract_video_frames(video_path)
 
     video_out = cv2.VideoWriter(
         str(keypoint_video_path),
-        cv2.VideoWriter_fourcc(*'MJPG'),
+        cv2.VideoWriter_fourcc(*"MJPG"),
         frame_rate,
         frame_size,
-        False
+        False,
     )
 
     for frame in video_frames:
@@ -136,7 +143,7 @@ def generate_keypoint_video(video_path: Path, kp_method: str = "SIFT") -> Path:
     end_time = datetime.now()
 
     keypoint_detection_time = int((end_time - start_time).total_seconds())
-    print(f"*** Keypoints detected in {stringify_time(keypoint_detection_time)} ***")    
+    print(f"*** Keypoints detected in {stringify_time(keypoint_detection_time)} ***")
 
     return keypoint_video_path
 
@@ -155,7 +162,9 @@ def get_transparent_keypoint_frame(keypoints: Iterable, frame_size: Iterable):
 
     black_frame = Image.fromarray(black_frame)
 
-    black_frame = black_frame.convert("RGBA")  # for alpha-conversion to make it transparent
+    black_frame = black_frame.convert(
+        "RGBA"
+    )  # for alpha-conversion to make it transparent
     pixels = black_frame.getdata()
     new_pixels = []
     for item in pixels:
@@ -163,6 +172,8 @@ def get_transparent_keypoint_frame(keypoints: Iterable, frame_size: Iterable):
             new_pixels.append((0, 0, 0, 0))
         else:
             new_pixels.append(item)
- 
-    black_frame.putdata(new_pixels) # this frame is now transparent except for the keypoints
+
+    black_frame.putdata(
+        new_pixels
+    )  # this frame is now transparent except for the keypoints
     return black_frame

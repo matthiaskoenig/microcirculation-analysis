@@ -3,26 +3,23 @@
 Read image and display.
 """
 from pathlib import Path
+from typing import Iterable
 
+import cv2
+import napari
 import numpy as np
 from PIL import Image
 from skimage import data
 from skimage.io import imread
 
-import napari
-import cv2
-
-
-from typing import Iterable
-
+from microcirculation import resources_dir, results_dir
 from microcirculation.filters.vessel_detection import threshold_vessels_detection_local
 from microcirculation.video.keypoints import (
+    draw_keypoints_on_frame,
+    generate_keypoint_video,
     get_keypoints_for_frame,
     get_transparent_keypoint_frame,
-    draw_keypoints_on_frame,
-    generate_keypoint_video
 )
-from microcirculation import resources_dir, results_dir
 
 
 def superimpose_keypoints_on_frame(src_path: Path) -> None:
@@ -45,7 +42,6 @@ if __name__ == "__main__":
     #     resources_path / "sublingua_keypoints.png"
     # ]
     # # visualize_frames_in_napari_from_path(frame_paths=frame_paths)
-
 
     # from microcirculation.napari_visualization import get_napari_viewer
 
@@ -74,7 +70,10 @@ if __name__ == "__main__":
 
     # napari.run()
 
-
-    video_path = results_dir / "vessel_videos" / "BRM-TC-Jena-P0-AdHoc-1-20220901-092449047---V0_vessels..avi"
+    video_path = (
+        results_dir
+        / "vessel_videos"
+        / "BRM-TC-Jena-P0-AdHoc-1-20220901-092449047---V0_vessels..avi"
+    )
 
     keypoint_video_path = generate_keypoint_video(video_path=video_path)

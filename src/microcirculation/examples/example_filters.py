@@ -1,17 +1,16 @@
-from pathlib import Path
 import os
+from pathlib import Path
 from typing import List
 
 import numpy as np
-
 from PIL import Image
 
 from microcirculation import resources_dir, results_dir
+from microcirculation.filters.standard_transformations import (
+    normalize_frames_brightness,
+)
 from microcirculation.filters.vessel_detection import *
 from microcirculation.utils import stack_images, write_frames_as_video
-from microcirculation.filters.standard_transformations import normalize_frames_brightness
-
-
 from microcirculation.video.keypoints import keypoint_detection
 
 
@@ -84,14 +83,14 @@ def run_frames_preprocessing(frames: np.array) -> np.array:
             image_filtered = filter(image)
             frame = np.array(image_filtered)
 
-        # inter-frame brightness normalization on filtered frames  
-        normalized_frames = normalize_frames_brightness(frames = frames)
+        # inter-frame brightness normalization on filtered frames
+        normalized_frames = normalize_frames_brightness(frames=frames)
 
         write_frames_as_video(
             frames=normalized_frames,
             frame_size=normalized_frames[0].shape,
             frame_rate=20,
-            video_out_path=Path(f"normalized_frames_{filter.__name__}.mp4")
+            video_out_path=Path(f"normalized_frames_{filter.__name__}.mp4"),
         )
 
 
@@ -103,13 +102,11 @@ def apply_keypoint_detection_on_all_files_in_directory(dir_path: Path) -> None:
 
 
 if __name__ == "__main__":
-
     results_dir: Path = results_dir / "filter_pipelines"
     test_image_path: Path = resources_dir / "sublingua.png"
     apply_all_filters(image_path=test_image_path, results_dir=results_dir)
 
     # keypoint examples
-
 
     # keypoints_results_dir: Path = results_dir / "keypoints"
     # image_for_keypoints: Path = results_dir / "01_sublingua_threshold_vessels_detection.png"

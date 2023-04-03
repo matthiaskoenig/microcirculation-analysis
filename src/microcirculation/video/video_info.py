@@ -1,11 +1,11 @@
 """Get video info."""
 from pathlib import Path
-from typing import Any, Dict, Optional, List
-
-import pandas as pd
+from typing import Any, Dict, List, Optional
 
 # TODO: create metadata file and video overview
 import cv2
+import pandas as pd
+
 
 def get_video_info(video_path: Path, metadata: Dict[str, Any] = None) -> Dict[str, Any]:
     """Get video information from cv2."""
@@ -30,11 +30,15 @@ def get_video_info(video_path: Path, metadata: Dict[str, Any] = None) -> Dict[st
     }
 
 
-def get_video_infos(video_dir: List[Path], metadata: Optional[Dict[str, Any]] = None, xlsx_out: Optional[Path] = None) -> pd.DataFrame:
+def get_video_infos(
+    video_dir: List[Path],
+    metadata: Optional[Dict[str, Any]] = None,
+    xlsx_out: Optional[Path] = None,
+) -> pd.DataFrame:
     """Overview of videos in directory."""
 
     data = []
-    for p in video_dir.glob('**/*.avi'):
+    for p in video_dir.glob("**/*.avi"):
         if p.is_file():
             md = {
                 "path": p.relative_to(video_dir),
@@ -66,7 +70,7 @@ if __name__ == "__main__":
         "device": "ops",
         "pixel_width": 1,
         "pixel_height": 1,
-        "pixel_unit": 'µm'
+        "pixel_unit": "µm",
     }
     video_dir = data_dir / "rat_liver_ops"
     df = get_video_infos(

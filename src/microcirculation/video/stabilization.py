@@ -21,17 +21,21 @@ how to deal with rotation?
 
 
 """
-from pathlib import Path
 import os
 from datetime import datetime
+from pathlib import Path
 from typing import Iterable
 
 import matplotlib.pyplot as plt
 from vidstab import VidStab
 
-from microcirculation import results_dir, resources_dir
+from microcirculation import resources_dir, results_dir
 from microcirculation.utils import stringify_time
-from microcirculation.video.video_utils import get_video_info, generate_vessel_detected_video
+from microcirculation.video.video_utils import (
+    generate_vessel_detected_video,
+    get_video_info,
+)
+
 
 def stabilize_video(original_video_path: Path, vessels_video_path: Path):
     start_time = datetime.now()
@@ -50,18 +54,19 @@ def stabilize_video(original_video_path: Path, vessels_video_path: Path):
     if original_video_path.stem not in os.listdir(results_dir / "stabilized_videos"):
         os.mkdir(results_dir / "stabilized_videos" / original_video_path.stem)
 
-    stabilized_video_path = results_dir / "stabilized_videos" / original_video_path.stem / f"{original_video_path.stem}_stabilized{original_video_path.suffix}"
+    stabilized_video_path = (
+        results_dir
+        / "stabilized_videos"
+        / original_video_path.stem
+        / f"{original_video_path.stem}_stabilized{original_video_path.suffix}"
+    )
     stabilizer.apply_transforms(str(original_video_path), str(stabilized_video_path))
 
     fig1, (ax1, ax2) = stabilizer.plot_trajectory()
-    fig1.savefig(
-        stabilized_video_path.parent / f"trajectory.png", bbox_inches="tight"
-    )
+    fig1.savefig(stabilized_video_path.parent / f"trajectory.png", bbox_inches="tight")
 
     fig2, (ax3, ax4) = stabilizer.plot_transforms()
-    fig2.savefig(
-        stabilized_video_path.parent / f"transforms.png", bbox_inches="tight"
-    )
+    fig2.savefig(stabilized_video_path.parent / f"transforms.png", bbox_inches="tight")
 
     end_time = datetime.now()
 
@@ -70,7 +75,6 @@ def stabilize_video(original_video_path: Path, vessels_video_path: Path):
 
 
 if __name__ == "__main__":
-
     video_path = resources_dir / "BRM-TC-Jena-P0-AdHoc-1-20220901-092449047---V0.avi"
     detection_config = ["global_hist", "ada_thresh", "median"]
     stabilize_video(video_path=video_path, detection_config=detection_config)

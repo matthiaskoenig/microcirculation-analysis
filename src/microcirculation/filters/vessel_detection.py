@@ -1,16 +1,17 @@
 """General filters for frame processing."""
-import numpy as np
-from PIL import Image
-from pathlib import Path
 import os
-import cv2
+from pathlib import Path
 from typing import Iterable
 
+import cv2
+import numpy as np
+from PIL import Image
+
+from microcirculation import resources_dir, results_dir
 from microcirculation.filters.morphological_operations import *
 from microcirculation.filters.standard_transformations import *
-from microcirculation.utils import get_average_grayscale_value, get_image_segment
 from microcirculation.filters.vessel_detection import *
-from microcirculation import resources_dir, results_dir
+from microcirculation.utils import get_average_grayscale_value, get_image_segment
 
 __all__ = [
     "threshold_vessels_detection",
@@ -127,7 +128,9 @@ def blur_erosion_vessels_detection(image: Image.Image) -> Image.Image:
     return erode(image)
 
 
-def detect_vessels_in_frame(image: Image.Image, output_path: str, config: Iterable) -> Image.Image:
+def detect_vessels_in_frame(
+    image: Image.Image, output_path: str, config: Iterable
+) -> Image.Image:
     if "global_hist" in config:
         image = histogram_equalization_global(image=image)
         output_path = output_path + "_ghe"
@@ -160,8 +163,10 @@ def vessel_detection_pipeline(image_path: Path, output_dir: Path, config: Iterab
     frame = cv2.imread(str(image_path), 0)
     image = Image.fromarray(frame)
 
-    image, output_path = detect_vessels_in_frame(image=image, output_path=str(output_path))
-    
+    image, output_path = detect_vessels_in_frame(
+        image=image, output_path=str(output_path)
+    )
+
     output_path = str(output_path) + ".png"
 
     frame = np.array(image)
@@ -169,15 +174,20 @@ def vessel_detection_pipeline(image_path: Path, output_dir: Path, config: Iterab
 
 
 if __name__ == "__main__":
-    image_path = results_dir / "frames" / "FMR_015-TP1-1_converted" / "FMR_015-TP1-1_converted_frame0.png"
+    image_path = (
+        results_dir
+        / "frames"
+        / "FMR_015-TP1-1_converted"
+        / "FMR_015-TP1-1_converted_frame0.png"
+    )
 
     output_dir = results_dir / "pipeline_results"
     if not os.path.exists(output_dir):
         os.mkdir(output_dir)
 
-    configs = [
-        ["global_hist", "local_hist", "ada_thresh", "median"]
-    ]
+    configs = [["global_hist", "local_hist", "ada_thresh", "median"]]
 
     for config in configs:
-        vessel_detection_pipeline(image_path=image_path, output_dir=output_dir, config=config)
+        vessel_detection_pipeline(
+            image_path=image_path, output_dir=output_dir, config=config
+        )
