@@ -6,7 +6,7 @@ import numpy as np
 
 from PIL import Image
 
-from microcirculation import resources_path, results_path
+from microcirculation import resources_dir, results_dir
 from microcirculation.filters.vessel_detection import *
 from microcirculation.utils import stack_images, write_frames_as_video
 from microcirculation.filters.standard_transformations import normalize_frames_brightness
@@ -104,8 +104,8 @@ def apply_keypoint_detection_on_all_files_in_directory(dir_path: Path) -> None:
 
 if __name__ == "__main__":
 
-    results_dir: Path = results_path / "filter_pipelines"
-    test_image_path: Path = resources_path / "sublingua.png"
+    results_dir: Path = results_dir / "filter_pipelines"
+    test_image_path: Path = resources_dir / "sublingua.png"
     apply_all_filters(image_path=test_image_path, results_dir=results_dir)
 
     # keypoint examples

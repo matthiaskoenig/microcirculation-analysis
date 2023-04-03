@@ -14,7 +14,7 @@ from microcirculation.utils import extract_video_frames, write_frames_as_video
 from microcirculation.video.video_utils import generate_vessel_detected_video
 from microcirculation.video.keypoints import generate_keypoint_video
 from microcirculation.video.stabilization import stabilize_video
-from microcirculation import resources_path, results_path
+from microcirculation import resources_dir, results_dir
 
 def apply_preprocess_filters(
     video_in: Path, video_out_base: Path, filters=Iterable[Callable]
@@ -74,7 +74,7 @@ def video_stabilization_pipeline(video_path: Path, detection_config: Iterable):
 
 
 if __name__ == "__main__":
-    video_path = resources_path / "FMR_015-TP1-1_converted.avi"
+    video_path = resources_dir / "FMR_015-TP1-1_converted.avi"
     
     detection_config = ["global_hist", "ada_thresh", "median"]
 

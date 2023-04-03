@@ -22,7 +22,7 @@ from microcirculation.video.keypoints import (
     draw_keypoints_on_frame,
     generate_keypoint_video
 )
-from microcirculation import resources_path, results_path
+from microcirculation import resources_dir, results_dir
 
 
 def superimpose_keypoints_on_frame(src_path: Path) -> None:
@@ -75,6 +75,6 @@ if __name__ == "__main__":
     # napari.run()
 
 
-    video_path = results_path / "vessel_videos" / "BRM-TC-Jena-P0-AdHoc-1-20220901-092449047---V0_vessels..avi"
+    video_path = results_dir / "vessel_videos" / "BRM-TC-Jena-P0-AdHoc-1-20220901-092449047---V0_vessels..avi"
 
     keypoint_video_path = generate_keypoint_video(video_path=video_path)

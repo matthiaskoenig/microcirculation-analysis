@@ -33,7 +33,7 @@ import numpy as np
 # optical_flow = cv2.calcOpticalFlowPyrLK(self.prev_gray,
 #                                         current_frame_gray,
 #                                         self.prev_kps, None)
-from microcirculation import data_path
+from microcirculation import data_dir
 
 
 def dense_optical_flow(method, video_path, params=[], to_gray=False):
@@ -100,7 +100,7 @@ visualization using HSV color format.
 """
 
 if __name__ == "__main__":
-    video_stable: Path = data_path / "ops" / "output_stable.avi"
+    video_stable: Path = data_dir / "ops" / "output_stable.avi"
 
     # algorithm = 'lucaskanade_dense'
     algorithm = "farneback"

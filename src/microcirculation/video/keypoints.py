@@ -9,7 +9,7 @@ import numpy as np
 from PIL import Image
 
 from microcirculation.utils import extract_video_frames
-from microcirculation import results_path
+from microcirculation import results_dir
 from microcirculation.utils import stringify_time
 
 def keypoint_detection(image: Image.Image, kp_method: str) -> Image.Image:
@@ -113,9 +113,9 @@ def generate_keypoint_video(video_path: Path, kp_method: str = "SIFT") -> Path:
 
     start_time = datetime.now()
 
-    if "keypoint_videos" not in os.listdir(results_path):
-        os.mkdir(results_path / "keypoint_videos")
-    keypoint_video_path = results_path / "keypoint_videos" / f"{video_path.stem}_keypoints{video_path.suffix}"
+    if "keypoint_videos" not in os.listdir(results_dir):
+        os.mkdir(results_dir / "keypoint_videos")
+    keypoint_video_path = results_dir / "keypoint_videos" / f"{video_path.stem}_keypoints{video_path.suffix}"
 
     video_frames, frame_size, frame_rate = extract_video_frames(video_path)
 

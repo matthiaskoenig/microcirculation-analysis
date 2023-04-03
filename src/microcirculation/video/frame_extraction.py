@@ -3,7 +3,7 @@ import os
 import shutil
 import cv2
 
-from microcirculation import resources_path, results_path
+from microcirculation import resources_dir, results_dir
 from microcirculation.video.video_utils import get_video_info
 
 def extract_frames_from_video(video_path: Path, frame_capture_interval: int, results_dir: Path) -> None:
@@ -50,10 +50,10 @@ if __name__ == "__main__":
     FRAMES_NEEDED_PER_VIDEO = 10
 
     for video_name in video_names:
-        video_path = resources_path / video_name
+        video_path = resources_dir / video_name
         
-        frames_results_dir = results_path / "frames"
-        if "frames" not in os.listdir(results_path):
+        frames_results_dir = results_dir / "frames"
+        if "frames" not in os.listdir(results_dir):
             os.mkdir(frames_results_dir)
 
         frame_count = get_video_info(video_path=video_path)["frame_count"]

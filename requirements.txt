@@ -10,3 +10,4 @@ scikit-image>=0.19.3
 vidstab>=1.7.4
 opencv-python-headless>=4.7.0.68
 opencv-contrib-python-headless>=4.7.0.68
+openpyxl>=3.1.2

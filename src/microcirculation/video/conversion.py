@@ -1,3 +1,5 @@
+"""Convert OPS videos in readible format."""
+
 from pathlib import Path
 from typing import Tuple
 
@@ -63,20 +65,8 @@ def ops_conversion(
     out.release()
     cv.destroyAllWindows()
 
-
-if __name__ == "__main__":
-    from microcirculation import data_path
-
-    input_path: Path = data_path / "ops" / "FMR_015-TP1-2.avi"
-    output_path: Path = data_path / "ops" / "FMR_015-TP1-2_converted.avi"
-    ops_conversion(
-        input_path=input_path,
-        output_path=output_path,
-        fps_out=30.0,
-        frame_size=(640, 480),
-        show=True,
-    )
-
+def convert_ops_videos:
+    """TODO:"""
     # convert ops videos
     # input_dir: Path = data_path / "ops"
     # for video_in in sorted(input_dir.glob('*.avi')):
@@ -91,13 +81,17 @@ if __name__ == "__main__":
     #             show=False,
     #         )
 
-    # input_path: Path = data_path / "braedius" / "BRM-TC-Jena-P3-AdHoc-3-20220901-113654379---V0.avi"
-    # output_path: Path = data_path / "braedius" / "output.avi"
+if __name__ == "__main__":
+    from microcirculation import data_dir
 
-    # print(input_path)
-    # ops_conversion(
-    #     input_path=input_path,
-    #     output_path=output_path,
-    #     fps_out=30.0,
-    #     frame_size=(1772, 1328),
-    # )
+    input_path: Path = data_dir / "ops" / "FMR_015-TP1-2.avi"
+    output_path: Path = data_dir / "ops" / "FMR_015-TP1-2_converted.avi"
+    ops_conversion(
+        input_path=input_path,
+        output_path=output_path,
+        fps_out=30.0,
+        frame_size=(640, 480),
+        show=True,
+    )
+
+

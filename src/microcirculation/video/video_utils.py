@@ -13,42 +13,14 @@ import cv2
 import numpy as np
 from PIL import Image
 
-from microcirculation import results_path
+from microcirculation import results_dir
 from microcirculation.utils import extract_video_frames, stringify_time
 from microcirculation.filters.vessel_detection import detect_vessels_in_frame
 
 composite_videos_path = Path("./composite_videos")
 
 
-def get_video_info(video_path: Path):
-    """
-    1. Get video meta data
-        frame_height: int
-        frame_width: int
-        frame_rate: int  # frames per second
-        pixel_width: float  # [µm] (magnification, ... spacial resolution; -> dictionary with defintions; OPS_10x =; OPS_5x ... IDF = ...)
-        pixel_height: float  # [µm] not always square
-    """
 
-    video_file = cv2.VideoCapture(str(video_path))
-    frame_count: int = int(video_file.get(cv2.CAP_PROP_FRAME_COUNT))
-    frame_height: int = int(video_file.get(cv2.CAP_PROP_FRAME_HEIGHT))
-    frame_width: int = int(video_file.get(cv2.CAP_PROP_FRAME_WIDTH))
-    frame_rate: int = int(video_file.get(cv2.CAP_PROP_FPS))
-    duration: int = frame_count // frame_rate  # duration in seconds
-
-    pixel_width = 0  # TODO: need to figure out
-    pixel_height = 0  # TODO: need to figure out
-
-    return {
-        "frame_count": frame_count,
-        "frame_rate": frame_rate,
-        "duration": duration,
-        "frame_height": frame_height,
-        "frame_width": frame_width,
-        "pixel_width": pixel_width,
-        "pixel_height": pixel_height,
-    }
 
 
 def get_composite_video(
@@ -136,9 +108,9 @@ def generate_vessel_detected_video(video_path: Path, detection_config: Iterable)
 
     start_time = datetime.now()
 
-    if "vessel_videos" not in os.listdir(results_path):
-        os.mkdir(results_path / "vessel_videos")
-    vessel_video_path = results_path / "vessel_videos" / f"{video_path.stem}_vessels{video_path.suffix}"
+    if "vessel_videos" not in os.listdir(results_dir):
+        os.mkdir(results_dir / "vessel_videos")
+    vessel_video_path = results_dir / "vessel_videos" / f"{video_path.stem}_vessels{video_path.suffix}"
 
     video_frames, frame_size, frame_rate = extract_video_frames(video_path)
 

@@ -29,7 +29,7 @@ from typing import Iterable
 import matplotlib.pyplot as plt
 from vidstab import VidStab
 
-from microcirculation import results_path, resources_path
+from microcirculation import results_dir, resources_dir
 from microcirculation.utils import stringify_time
 from microcirculation.video.video_utils import get_video_info, generate_vessel_detected_video
 
@@ -45,12 +45,12 @@ def stabilize_video(original_video_path: Path, vessels_video_path: Path):
         show_progress=True,
     )
 
-    if "stabilized_videos" not in os.listdir(results_path):
-        os.mkdir(results_path / "stabilized_videos")
-    if original_video_path.stem not in os.listdir(results_path / "stabilized_videos"):
-        os.mkdir(results_path / "stabilized_videos" / original_video_path.stem)
+    if "stabilized_videos" not in os.listdir(results_dir):
+        os.mkdir(results_dir / "stabilized_videos")
+    if original_video_path.stem not in os.listdir(results_dir / "stabilized_videos"):
+        os.mkdir(results_dir / "stabilized_videos" / original_video_path.stem)
 
-    stabilized_video_path = results_path / "stabilized_videos" / original_video_path.stem / f"{original_video_path.stem}_stabilized{original_video_path.suffix}"
+    stabilized_video_path = results_dir / "stabilized_videos" / original_video_path.stem / f"{original_video_path.stem}_stabilized{original_video_path.suffix}"
     stabilizer.apply_transforms(str(original_video_path), str(stabilized_video_path))
 
     fig1, (ax1, ax2) = stabilizer.plot_trajectory()
@@ -71,6 +71,6 @@ def stabilize_video(original_video_path: Path, vessels_video_path: Path):
 
 if __name__ == "__main__":
 
-    video_path = resources_path / "BRM-TC-Jena-P0-AdHoc-1-20220901-092449047---V0.avi"
+    video_path = resources_dir / "BRM-TC-Jena-P0-AdHoc-1-20220901-092449047---V0.avi"
     detection_config = ["global_hist", "ada_thresh", "median"]
     stabilize_video(video_path=video_path, detection_config=detection_config)

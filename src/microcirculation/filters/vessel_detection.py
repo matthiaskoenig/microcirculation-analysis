@@ -10,7 +10,7 @@ from microcirculation.filters.morphological_operations import *
 from microcirculation.filters.standard_transformations import *
 from microcirculation.utils import get_average_grayscale_value, get_image_segment
 from microcirculation.filters.vessel_detection import *
-from microcirculation import resources_path, results_path
+from microcirculation import resources_dir, results_dir
 
 __all__ = [
     "threshold_vessels_detection",
@@ -169,9 +169,9 @@ def vessel_detection_pipeline(image_path: Path, output_dir: Path, config: Iterab
 
 
 if __name__ == "__main__":
-    image_path = results_path / "frames" / "FMR_015-TP1-1_converted" / "FMR_015-TP1-1_converted_frame0.png"
+    image_path = results_dir / "frames" / "FMR_015-TP1-1_converted" / "FMR_015-TP1-1_converted_frame0.png"
 
-    output_dir = results_path / "pipeline_results"
+    output_dir = results_dir / "pipeline_results"
     if not os.path.exists(output_dir):
         os.mkdir(output_dir)
 
