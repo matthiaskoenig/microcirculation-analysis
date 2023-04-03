@@ -10,12 +10,6 @@ from pathlib import Path
 from typing import Iterable
 
 import cv2
-import numpy as np
-from PIL import Image
-
-from microcirculation import results_dir
-from microcirculation.filters.vessel_detection import detect_vessels_in_frame
-from microcirculation.utils import extract_video_frames, stringify_time
 
 composite_videos_path = Path("./composite_videos")
 
@@ -97,51 +91,4 @@ def get_composite_video(
     cv2.destroyAllWindows()
 
 
-def generate_vessel_detected_video(
-    video_path: Path, detection_config: Iterable
-) -> Path:
-    """
-    Detects vessels in each frame of the video and produces
-    a video using such vessel detected frames.
-    """
 
-    start_time = datetime.now()
-
-    if "vessel_videos" not in os.listdir(results_dir):
-        os.mkdir(results_dir / "vessel_videos")
-    vessel_video_path = (
-        results_dir / "vessel_videos" / f"{video_path.stem}_vessels{video_path.suffix}"
-    )
-
-    video_frames, frame_size, frame_rate = extract_video_frames(video_path)
-
-    video_out_buffer = cv2.VideoWriter(
-        str(vessel_video_path),
-        cv2.VideoWriter_fourcc(*"MJPG"),
-        frame_rate,
-        frame_size,
-        False,
-    )
-
-    for frame in video_frames:
-        image = Image.fromarray(frame)
-        vessel_frame, _ = detect_vessels_in_frame(image, "", detection_config)
-        video_out_buffer.write(np.array(vessel_frame))
-
-    video_out_buffer.release()
-
-    end_time = datetime.now()
-
-    vessel_detection_time = int((end_time - start_time).total_seconds())
-    print(f"*** Vessels detected in {stringify_time(vessel_detection_time)} ***")
-
-    return vessel_video_path
-
-
-"""
-3. Overview table of the videos
-=> excel spreadsheet: especially important for the OPS videos; what degree of hepatectomy
-=> Matthias: mapping of video ids to biological information; 
-species: human/rat
-tissue: liver/sublingual
-"""

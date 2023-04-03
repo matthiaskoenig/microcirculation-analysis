@@ -1,7 +1,7 @@
 """General filters for frame processing."""
 import os
 from pathlib import Path
-from typing import Iterable
+from typing import Iterable, Optional
 
 import cv2
 import numpy as np
@@ -93,8 +93,9 @@ def threshold_vessels_detection_avg_grayscale(image: Image.Image) -> Image.Image
     Detection of vessels by thresholding edge detected image using avgerage grayscale value.
     """
     image_edges = detect_edges_sobel(image)
+    image = np.array(image, dtype=np.uint8)
+    avg_grayscale_value: int = int(np.mean(image))
 
-    avg_grayscale_value: int = get_average_grayscale_value(image_edges)
     return threshold(image_edges, avg_grayscale_value)
 
 
@@ -129,8 +130,10 @@ def blur_erosion_vessels_detection(image: Image.Image) -> Image.Image:
 
 
 def detect_vessels_in_frame(
-    image: Image.Image, output_path: str, config: Iterable
+    image: Image.Image, config: Iterable[str], output_path: str = ""
 ) -> Image.Image:
+
+    # FIXME: remove the file namings
     if "global_hist" in config:
         image = histogram_equalization_global(image=image)
         output_path = output_path + "_ghe"

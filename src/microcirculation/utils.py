@@ -12,6 +12,7 @@ def get_average_grayscale_value(image: Image.Image) -> int:
 
 
 def extract_video_frames(video_in: Path) -> np.array:
+    """Extract video frames."""
     video = cv2.VideoCapture(str(video_in))
     frame_height: int = int(video.get(cv2.CAP_PROP_FRAME_HEIGHT))
     frame_width: int = int(video.get(cv2.CAP_PROP_FRAME_WIDTH))
@@ -95,7 +96,3 @@ def get_image_segment(
         bottom_perc / 100 * height,
     )
     return image.crop(region)
-
-
-def stringify_time(seconds: int):
-    return f"""{seconds // 3600 if seconds // 3600 else ''}{((seconds // 3600) > 0) * 'h '}{seconds // 60 if seconds // 60 else ''}{((seconds // 60) > 0) * 'm '}{seconds % 60}s"""

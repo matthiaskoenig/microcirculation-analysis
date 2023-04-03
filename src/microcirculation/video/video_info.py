@@ -38,7 +38,7 @@ def get_video_infos(
     """Overview of videos in directory."""
 
     data = []
-    for p in video_dir.glob("**/*.avi"):
+    for p in sorted(video_dir.glob("**/*.avi")):
         if p.is_file():
             md = {
                 "path": p.relative_to(video_dir),
@@ -68,11 +68,13 @@ if __name__ == "__main__":
     # The OPS has a resolution of approximately 1 µm/pixel (6)
     metadata = {
         "device": "ops",
+        "species": "rat",
+        "tissue": "liver",
         "pixel_width": 1,
         "pixel_height": 1,
         "pixel_unit": "µm",
     }
-    video_dir = data_dir / "rat_liver_ops"
+    video_dir = data_dir / "rat_liver_ops" / "videos" / "processed"
     df = get_video_infos(
         video_dir=video_dir,
         metadata=metadata,
