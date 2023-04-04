@@ -2,24 +2,28 @@
 
 import time
 from pathlib import Path
+from typing import Iterable, Dict, Any
 
 import cv2
 import numpy as np
-from progress.bar import IncrementalBar
+from tqdm import tqdm
 
 from microcirculation import data_dir
-from microcirculation.console import console
+
+import ray
+ray.init()
 
 
+@ray.remote
 def convert_video(
-    input_path: Path,
-    output_path: Path,
+    video_in: Path,
+    video_out: Path,
     fps_out: float,
 ):
     """Read video and convert to FFV1 codec with given frame rate."""
-    console.print(f"Conversion: {input_path} -> {output_path}")
+    print(f"Conversion: {video_in} -> {video_out}")
     start = time.time()
-    cap = cv2.VideoCapture(str(input_path))
+    cap = cv2.VideoCapture(str(video_in))
 
     # input video
     frame_count: int = int(cap.get(cv2.CAP_PROP_FRAME_COUNT))
@@ -29,7 +33,7 @@ def convert_video(
     frame_size = (frame_width, frame_height)
 
     if not np.isclose(frame_rate, fps_out):
-        console.print(f"changing framerate: {frame_rate} -> {fps_out}")
+        print(f"changing framerate: {frame_rate} -> {fps_out}")
 
     # Define the codec and create VideoWriter object
     # fourcc = cv.VideoWriter_fourcc(*'XVID')
@@ -37,14 +41,12 @@ def convert_video(
     # lossless codecs (e.g. FFMPEG FFV1, Huffman HFYU, Lagarith LAGS, etc...)
     fourcc = cv2.VideoWriter_fourcc(*"FFV1")  # lossless
     out = cv2.VideoWriter(
-        filename=str(output_path),
+        filename=str(video_out),
         fourcc=fourcc,
         fps=fps_out,
         frameSize=frame_size,
     )
-    bar = IncrementalBar("", max=frame_count, suffix="%(percent)d%%")
     while True:
-        bar.next()
         read_success, frame = cap.read()
         if not read_success:
             break
@@ -53,24 +55,42 @@ def convert_video(
 
     cap.release()
     out.release()
-    bar.finish()
 
-    console.print(f"video converted in: {time.time() - start:.2f} seconds")
+    print(f"{video_in.name} converted: {time.time() - start:.2f} seconds")
 
 
-def convert_video_directory(input_dir, output_dir, fps_out: float):
+def convert_video_directory(input_dir: Path, output_dir: Path, fps_out: float):
     """Convert videos."""
+    if not input_dir.exists():
+        raise IOError(f"input_dir does not exist: {input_dir}")
 
-    # TODO: parallelization
-    # videos =
+    if not output_dir.exists():
+        output_dir.mkdir(exist_ok=True, parents=True)
 
+    data = []
     for video_in in sorted(input_dir.glob("*.avi")):
-        video_out = output_dir / f"{video_in.name}"
-        convert_video(
-            input_path=video_in,
-            output_path=video_out,
-            fps_out=fps_out,
+        data.append(
+            {
+                'video_in': video_in,
+                'video_out': output_dir / f"{video_in.name}",
+                'fps_out': fps_out,
+            }
         )
+    convert_videos(data)
+
+def to_iterator(obj_ids):
+    """Iterator for the progress bar."""
+    while obj_ids:
+        done, obj_ids = ray.wait(obj_ids)
+        yield ray.get(done[0])
+
+def convert_videos(data: Iterable[Dict[str, Any]]):
+    """Process videos in parallel with ray."""
+    obj_ids = [convert_video.remote(**d) for d in data]
+    # results = [ray.get(obj_id) for obj_id in obj_ids]
+    #
+    for _ in tqdm(to_iterator(obj_ids), total=len(obj_ids)):
+        pass
 
 
 if __name__ == "__main__":
@@ -104,8 +124,8 @@ if __name__ == "__main__":
     #     fps_out=30.0,  # slow down idf videos
     # )
 
-    # convert_video_directory(
-    #     input_dir=data_dir / "human_sublingual_idf" / "videos" / "raw",
-    #     output_dir=data_dir / "human_sublingual_idf" / "videos" / "converted",
-    #     fps_out=30.0,  # slow down idf videos
-    # )
+    convert_video_directory(
+        input_dir=data_dir / "human_sublingual_idf" / "videos" / "raw",
+        output_dir=data_dir / "human_sublingual_idf" / "videos" / "converted",
+        fps_out=30.0,  # slow down idf videos
+    )

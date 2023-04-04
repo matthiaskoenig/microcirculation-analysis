@@ -114,11 +114,8 @@ def generate_keypoint_video(video_path: Path, kp_method: str = "SIFT") -> Path:
 if __name__ == "__main__":
     from microcirculation import data_dir
 
-    video_stabilize = data_dir / "test" / "FMR_010-TP1-1_converted.avi"
-    video_keypoints = data_dir / "test" / "FMR_010-TP1-1_vessels.avi"
-
     # framerate on the OPS videos is 30 frames/second
-    smoothing_window = 60
+    smoothing_window = 30
 
     # stabilize_video(
     #     video_stabilize=video_stabilize,
@@ -128,8 +125,8 @@ if __name__ == "__main__":
     # )
 
     stabilize_video(
-        video_stabilize=video_stabilize,
-        video_keypoints=video_keypoints,
-        video_out=data_dir / "test" / "FMR_010-TP1-1_vessels_stable.avi",
+        video_stabilize=data_dir / "test" / "rat_liver_idf.avi",
+        video_keypoints=data_dir / "test" / "rat_liver_idf_lhe_at_median.avi",
+        video_out=data_dir / "test" / "rat_liver_idf_stable.avi",
         smoothing_window=smoothing_window,
     )
